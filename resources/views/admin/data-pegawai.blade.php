@@ -12,119 +12,32 @@
         .nav-icon { min-width: 24px; text-align: center; }
         .sidebar-scroll::-webkit-scrollbar { width: 4px; }
         .sidebar-scroll::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
-
-        .nav-active-indicator { position: relative; }
-        .nav-active-indicator::before {
-            content: "";
-            position: absolute;
-            left: -34px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 5px;
-            height: 22px;
-            background-color: #2a93c9;
-            border-radius: 0 4px 4px 0;
-        }
-        .submenu-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 6px;
-            white-space: normal;
-            line-height: 1.25;
-        }
-        .submenu-dot {
-            margin-top: 2px;
-            flex-shrink: 0;
-        }
-
+        .sidebar-text { transition: all 0.2s ease; }
+        
         .form-input-custom {
             width: 100%;
-            border: 1px solid #b8e1f4;
+            border: 1px solid #93c5fd; 
             border-radius: 6px;
-            padding: 10px 16px;
+            height: 40px;
+            padding: 0 12px;
             color: #4a5568;
             font-size: 13px;
             outline: none;
             background-color: white;
-            transition: all 0.2s;
+            transition: border-color 0.2s;
         }
-        .form-input-custom:focus { border-color: #2a93c9; }
-        .sidebar-text { transition: all 0.2s ease; }    </style>
+        .form-input-custom:focus {
+            border-color: #3b82f6; 
+            box-shadow: 0 0 0 1px #3b82f6;
+        }    
+    </style>
 </head>
 <body class="flex h-screen overflow-hidden text-gray-800">
 
-    <aside id="sidebar" class="w-[260px] bg-white h-screen flex flex-col justify-between shadow-[2px_0_10px_rgba(0,0,0,0.03)] flex-shrink-0 z-20 transition-all duration-300 relative">
-        <div class="flex-1 overflow-y-auto sidebar-scroll pb-4">
-            <div id="logo-container" class="h-[90px] flex items-center px-6 gap-3 border-b border-transparent sticky top-0 bg-white z-10">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/2/28/Lambang_Badan_Pusat_Statistik_%28BPS%29_Indonesia.svg" alt="Logo BPS" class="w-[45px] flex-shrink-0">
-                <div class="sidebar-text text-[13px] font-bold leading-tight uppercase tracking-tight text-black whitespace-nowrap">
-                    BPS <br> KOTA SUKABUMI
-                </div>
-            </div>
-
-            <nav class="mt-6 flex flex-col gap-2 px-4">
-                <a href="/dashboard" class="nav-link flex items-center justify-start gap-4 px-3 py-2.5 rounded-md font-medium text-gray-700 hover:text-[#2a93c9] hover:bg-gray-50 transition-all duration-300">
-                    <i class="fa-solid fa-house nav-icon text-lg"></i>
-                    <span class="sidebar-text text-[14px] whitespace-nowrap">Dashboard</span>
-                </a>
-                
-                <a href="/manajemen-user" class="nav-link flex items-center justify-start gap-4 px-3 py-2.5 rounded-md font-medium text-gray-700 hover:text-[#2a93c9] hover:bg-gray-50 transition-all duration-300">
-                    <i class="fa-solid fa-users nav-icon text-lg"></i>
-                    <span class="sidebar-text text-[14px] whitespace-nowrap">Manajemen User</span>
-                </a>
-
-                <a href="/daftar-template" class="nav-link flex items-center justify-start gap-4 px-3 py-2.5 rounded-md font-medium text-gray-700 hover:text-[#2a93c9] hover:bg-gray-50 transition-all duration-300">
-                    <i class="fa-solid fa-print nav-icon text-lg"></i>
-                    <span class="sidebar-text text-[14px] whitespace-nowrap">Daftar Template SK</span>
-                </a>
-
-                <div class="flex flex-col">
-                    <button id="dataMasterBtn" class="nav-link w-full flex items-center justify-start gap-4 px-3 py-2.5 rounded-md font-medium text-[#2a93c9] transition-all duration-300 cursor-pointer">
-                        <i class="fa-solid fa-hard-drive nav-icon text-lg"></i>
-                        <span class="sidebar-text text-[14px] whitespace-nowrap">Data Master</span>
-                        <i class="fa-solid fa-chevron-down ml-auto text-[10px] sidebar-text" id="arrow"></i>
-                    </button>
-                    
-                    <div id="submenuDataMaster" class="hidden flex-col pl-12 pr-3 py-2 space-y-4 transition-all duration-300">
-    <a href="/data-teknis" class="sidebar-text text-[13px] text-gray-500 hover:text-[#2491c9] flex items-center gap-2 whitespace-nowrap transition-colors">
-        <span>&middot;</span> Data Teknis dan Administrasi
-    </a>
-    <a href="/data-kpa" class="sidebar-text text-[13px] text-gray-500 hover:text-[#2491c9] flex items-center gap-2 whitespace-nowrap transition-colors">
-        <span>&middot;</span> Data KPA & DIPA
-    </a>
-    <a href="/data-pegawai" class="sidebar-text text-[13px] text-gray-500 hover:text-[#2491c9] flex items-center gap-2 whitespace-nowrap transition-colors">
-        <span>&middot;</span> Data Pegawai dan Mitra Statistik
-    </a>
-    <a href="/data-jenis-sk" class="sidebar-text text-[13px] text-gray-500 hover:text-[#2491c9] flex items-center gap-2 whitespace-nowrap transition-colors">
-        <span>&middot;</span> Data Jenis SK
-    </a>
-    <a href="/data-jabatan" class="sidebar-text text-[13px] text-gray-500 hover:text-[#2491c9] flex items-center gap-2 whitespace-nowrap transition-colors">
-        <span>&middot;</span> Data Jabatan Peserta
-    </a>
-</div>
-                </div>
-
-                <a href="/arsip" class="nav-link flex items-center justify-start gap-4 px-3 py-2.5 rounded-md text-gray-700 font-medium hover:text-[#2a93c9] hover:bg-gray-50 transition-all duration-300">
-                    <i class="fa-solid fa-folder-open nav-icon text-lg"></i>
-                    <span class="sidebar-text text-[14px] whitespace-nowrap">Arsip / Monitoring SK</span>
-                </a>
-
-                <a href="/pengaturan" class="nav-link flex items-center justify-start gap-4 px-3 py-2.5 rounded-md text-gray-700 font-medium hover:text-[#2a93c9] hover:bg-gray-50 transition-all duration-300">
-                    <i class="fa-solid fa-gear nav-icon text-lg"></i>
-                    <span class="sidebar-text text-[14px] whitespace-nowrap">Pengaturan</span>
-                </a>
-            </nav>
-        </div>
-        
-        <div class="p-6 border-t border-gray-100 bg-white sticky bottom-0">
-            <a href="/" class="nav-link flex items-center justify-start gap-4 text-gray-800 font-medium hover:text-red-500 transition-all duration-300">
-                <i class="fa-solid fa-right-from-bracket nav-icon text-xl"></i>
-                <span class="sidebar-text text-[14px] whitespace-nowrap">Logout</span>
-            </a>
-        </div>
-    </aside>
+    @include('components.sidebar', ['active' => 'data-pegawai'])
 
     <main class="flex-1 flex flex-col h-screen overflow-y-auto transition-all duration-300 relative">
+        
         <header class="h-[80px] flex items-center justify-between px-8 flex-shrink-0 bg-[#f4f6f9] sticky top-0 z-10">
             <button id="hamburgerToggle" class="w-[35px] h-[35px] bg-[#2a93c9] rounded flex flex-col items-center justify-center gap-[5px] hover:bg-[#1d7aa9] transition cursor-pointer shadow-sm">
                 <div class="w-[18px] h-[2px] bg-white"></div>
@@ -136,70 +49,78 @@
             </div>
         </header>
 
-        <div class="px-8 pt-2 pb-10">
+        <div class="px-8 pt-2 pb-10 fade-in">
             
             <div id="viewTabel">
                 <div class="flex justify-between items-center mb-6">
                     <h1 class="text-[22px] font-semibold text-black tracking-tight">Data Pegawai dan Mitra Statistik</h1>
-                    <button onclick="tampilkanTambah()" class="px-6 py-2 border border-[#2a93c9] text-[#2a93c9] text-[13px] font-medium rounded hover:bg-[#2a93c9] hover:text-white transition-all duration-300 tracking-wide bg-white shadow-sm">
+                    <button onclick="tampilkanTambah()" class="px-6 py-2 border border-[#2a93c9] text-[#2a93c9] text-[13px] font-medium rounded hover:bg-blue-50 transition-all duration-300 tracking-wide bg-white shadow-sm">
                         TAMBAH
                     </button>
                 </div>
 
-                <div class="bg-white rounded border border-gray-200 shadow-sm overflow-hidden min-h-[500px]">
+                <div class="bg-white rounded border border-[#e2e8f0] shadow-sm overflow-hidden min-h-[500px]">
                     <table class="w-full text-center border-collapse">
                         <thead>
                             <tr class="bg-[#2a93c9] text-white">
-                                <th class="py-3 px-6 font-medium text-[13px] w-16">No</th>
-                                <th class="py-3 px-6 font-medium text-[13px]">Nama</th>
-                                <th class="py-3 px-6 font-medium text-[13px]">Status</th>
-                                <th class="py-3 px-6 font-medium text-[13px]">NIP/NIK</th>
-                                <th class="py-3 px-6 font-medium text-[13px]">Alamat</th>
-                                <th class="py-3 px-6 font-medium text-[13px]">No Telepon</th>
+                                <th class="py-3 px-6 font-medium text-[13px] w-16 border-r border-[#3a9ed0]">No</th>
+                                <th class="py-3 px-6 font-medium text-[13px] border-r border-[#3a9ed0]">Nama</th>
+                                <th class="py-3 px-6 font-medium text-[13px] border-r border-[#3a9ed0]">Status</th>
+                                <th class="py-3 px-6 font-medium text-[13px] border-r border-[#3a9ed0]">NIP/NIK</th>
+                                <th class="py-3 px-6 font-medium text-[13px] border-r border-[#3a9ed0]">Alamat</th>
+                                <th class="py-3 px-6 font-medium text-[13px] border-r border-[#3a9ed0]">No Telepon</th>
                                 <th class="py-3 px-6 font-medium text-[13px] w-32">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody id="bodyTabelPegawai" class="text-gray-700">
-                        </tbody>
+                        <tbody id="bodyTabelPegawai">
+                            </tbody>
                     </table>
                 </div>
             </div>
 
             <div id="viewTambah" class="hidden">
-                <h1 class="text-[22px] font-semibold text-black tracking-tight mb-8">Data Pegawai dan Mitra Statistik</h1>
+                <h1 class="text-[22px] font-semibold text-black tracking-tight mb-8">Tambah Data Pegawai/Mitra</h1>
+                
                 <div class="flex justify-center mt-4">
-                    <div class="bg-[#f8fafc] rounded border border-gray-200 shadow-sm w-full max-w-[550px] p-8">
+                    <div class="bg-white rounded border border-[#e2e8f0] shadow-sm w-full max-w-[500px] p-10">
                         <div class="space-y-5">
                             <div>
-                                <label class="block text-[#4a9bc8] text-[13px] font-medium mb-1.5">Nama Lengkap</label>
+                                <label class="block text-[#4a9bc8] text-[13px] font-medium mb-2">Nama Lengkap</label>
                                 <input type="text" id="add-nama" class="form-input-custom">
                             </div>
-                            <div>
-                                <label class="block text-[#4a9bc8] text-[13px] font-medium mb-1.5">Status</label>
-                                <select id="add-status" class="form-input-custom appearance-none">
-                                    <option value="" disabled selected>Pilih Status</option>
+                            <div class="relative">
+                                <label class="block text-[#4a9bc8] text-[13px] font-medium mb-2">Status</label>
+                                <select id="add-status" class="form-input-custom appearance-none text-gray-700">
+                                    <option value="" disabled selected>Pilih Status...</option>
                                     <option value="PNS">PNS</option>
                                     <option value="PPPK">PPPK</option>
                                     <option value="Mitra Statistik Sobat">Mitra Statistik Sobat</option>
                                     <option value="Mitra Lainnya">Mitra Lainnya</option>
                                 </select>
+                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 top-7 text-[#4a9bc8]">
+                                    <i class="fa-solid fa-chevron-down text-[12px]"></i>
+                                </div>
                             </div>
                             <div>
-                                <label class="block text-[#4a9bc8] text-[13px] font-medium mb-1.5">NIP / NIK</label>
+                                <label class="block text-[#4a9bc8] text-[13px] font-medium mb-2">NIP / NIK</label>
                                 <input type="text" id="add-nip" class="form-input-custom">
                             </div>
                             <div>
-                                <label class="block text-[#4a9bc8] text-[13px] font-medium mb-1.5">Alamat</label>
+                                <label class="block text-[#4a9bc8] text-[13px] font-medium mb-2">Alamat</label>
                                 <input type="text" id="add-alamat" class="form-input-custom">
                             </div>
                             <div>
-                                <label class="block text-[#4a9bc8] text-[13px] font-medium mb-1.5">No Telepon</label>
+                                <label class="block text-[#4a9bc8] text-[13px] font-medium mb-2">No Telepon</label>
                                 <input type="text" id="add-telepon" class="form-input-custom">
                             </div>
 
-                            <div class="flex gap-4 pt-6">
-                                <button onclick="kembali()" class="flex-1 border border-[#4a9bc8] text-[#4a9bc8] py-2.5 rounded font-medium text-[13px] hover:bg-blue-50 transition bg-white">KEMBALI</button>
-                                <button onclick="prosesTambah()" class="flex-1 bg-[#4a9bc8] text-white py-2.5 rounded font-medium text-[13px] hover:bg-[#3982a9] transition">TAMBAH</button>
+                            <div class="flex justify-between gap-4 pt-4">
+                                <button onclick="kembali()" class="border border-[#4a9bc8] text-[#4a9bc8] px-8 py-2.5 rounded font-semibold text-[12px] text-center flex-1 hover:bg-blue-50 transition-colors uppercase bg-white">
+                                    KEMBALI
+                                </button>
+                                <button onclick="prosesTambah()" class="border border-[#4a9bc8] text-[#4a9bc8] px-8 py-2.5 rounded font-semibold text-[12px] flex-1 hover:bg-blue-50 transition-colors uppercase bg-white">
+                                    TAMBAH
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -208,37 +129,48 @@
 
             <div id="viewEdit" class="hidden">
                 <h1 class="text-[22px] font-semibold text-black tracking-tight mb-8">Edit Data Pegawai/Mitra</h1>
+                
                 <div class="flex justify-center mt-4">
-                    <div class="bg-[#f8fafc] rounded border border-gray-200 shadow-sm w-full max-w-[550px] p-8">
+                    <div class="bg-white rounded border border-[#e2e8f0] shadow-sm w-full max-w-[500px] p-10">
                         <input type="hidden" id="edit-index">
                         <div class="space-y-5">
                             <div>
-                                <label class="block text-[#4a9bc8] text-[13px] font-medium mb-1.5">Nama Lengkap</label>
+                                <label class="block text-[#4a9bc8] text-[13px] font-medium mb-2">Nama Lengkap</label>
                                 <input type="text" id="edit-nama" class="form-input-custom">
                             </div>
-                            <div>
-                                <label class="block text-[#4a9bc8] text-[13px] font-medium mb-1.5">Status</label>
-                                <select id="edit-status" class="form-input-custom appearance-none">
-                                    <option value="Pegawai">Pegawai</option>
-                                    <option value="Mitra Statistik">Mitra Statistik</option>
+                            <div class="relative">
+                                <label class="block text-[#4a9bc8] text-[13px] font-medium mb-2">Status</label>
+                                <select id="edit-status" class="form-input-custom appearance-none text-gray-700">
+                                    <option value="" disabled>Pilih Status...</option>
+                                    <option value="PNS">PNS</option>
+                                    <option value="PPPK">PPPK</option>
+                                    <option value="Mitra Statistik Sobat">Mitra Statistik Sobat</option>
+                                    <option value="Mitra Lainnya">Mitra Lainnya</option>
                                 </select>
+                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 top-7 text-[#4a9bc8]">
+                                    <i class="fa-solid fa-chevron-down text-[12px]"></i>
+                                </div>
                             </div>
                             <div>
-                                <label class="block text-[#4a9bc8] text-[13px] font-medium mb-1.5">NIP / NIK</label>
+                                <label class="block text-[#4a9bc8] text-[13px] font-medium mb-2">NIP / NIK</label>
                                 <input type="text" id="edit-nip" class="form-input-custom">
                             </div>
                             <div>
-                                <label class="block text-[#4a9bc8] text-[13px] font-medium mb-1.5">Alamat</label>
+                                <label class="block text-[#4a9bc8] text-[13px] font-medium mb-2">Alamat</label>
                                 <input type="text" id="edit-alamat" class="form-input-custom">
                             </div>
                             <div>
-                                <label class="block text-[#4a9bc8] text-[13px] font-medium mb-1.5">No Telepon</label>
+                                <label class="block text-[#4a9bc8] text-[13px] font-medium mb-2">No Telepon</label>
                                 <input type="text" id="edit-telepon" class="form-input-custom">
                             </div>
 
-                            <div class="flex gap-4 pt-6">
-                                <button onclick="kembali()" class="flex-1 border border-[#4a9bc8] text-[#4a9bc8] py-2.5 rounded font-medium text-[13px] hover:bg-blue-50 transition bg-white">KEMBALI</button>
-                                <button onclick="prosesUpdate()" class="flex-1 bg-[#4a9bc8] text-white py-2.5 rounded font-medium text-[13px] hover:bg-[#3982a9] transition">EDIT</button>
+                            <div class="flex justify-between gap-4 pt-4">
+                                <button onclick="kembali()" class="border border-[#4a9bc8] text-[#4a9bc8] px-8 py-2.5 rounded font-semibold text-[12px] text-center flex-1 hover:bg-blue-50 transition-colors uppercase bg-white">
+                                    KEMBALI
+                                </button>
+                                <button onclick="prosesUpdate()" class="border border-[#4a9bc8] text-[#4a9bc8] px-8 py-2.5 rounded font-semibold text-[12px] flex-1 hover:bg-blue-50 transition-colors uppercase bg-white">
+                                    SIMPAN
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -249,33 +181,6 @@
     </main>
 
     <script>
-        // --- LOGIKA SIDEBAR ---
-        const hamburgerBtn = document.getElementById('hamburgerToggle');
-        const sidebar = document.getElementById('sidebar');
-        const textsToHide = document.querySelectorAll('.sidebar-text');
-        const submenuDataMaster = document.getElementById('submenuDataMaster');
-        const dataMasterBtn = document.getElementById('dataMasterBtn');
-
-        hamburgerBtn.addEventListener('click', () => {
-            const isMinimized = sidebar.classList.contains('w-[80px]');
-            if (isMinimized) {
-                sidebar.classList.replace('w-[80px]', 'w-[260px]');
-                textsToHide.forEach(text => text.classList.remove('hidden'));
-                submenuDataMaster.classList.remove('hidden');
-            } else {
-                sidebar.classList.replace('w-[260px]', 'w-[80px]');
-                textsToHide.forEach(text => text.classList.add('hidden'));
-                submenuDataMaster.classList.add('hidden');
-            }
-        });
-
-        dataMasterBtn.addEventListener('click', () => {
-            if(!sidebar.classList.contains('w-[80px]')) {
-                submenuDataMaster.classList.remove('hidden');
-                submenuDataMaster.classList.add('flex');
-            }
-        });
-
         // --- LOGIKA DATA PEGAWAI (LocalStorage) ---
         let storageKey = 'dataPegawai_v1';
 
@@ -285,31 +190,34 @@
             body.innerHTML = '';
             
             if(items.length === 0) {
-                body.innerHTML = '<tr><td colspan="7" class="py-20 text-center text-gray-400 italic">Data belum tersedia. Silakan klik tambah.</td></tr>';
+                body.innerHTML = '<tr><td colspan="7" class="py-10 text-center text-gray-400 italic font-normal">Data belum tersedia. Silakan klik Tambah.</td></tr>';
                 return;
             }
 
             items.forEach((it, i) => {
                 body.innerHTML += `
-                <tr class="border-b hover:bg-gray-50 transition">
-                    <td class="py-4 px-6 text-[13px] text-[#2a93c9]">${i+1}</td>
-                    <td class="py-4 px-6 text-[13px] font-medium">${it.nama}</td>
-                    <td class="py-4 px-6 text-[13px]">${it.status}</td>
-                    <td class="py-4 px-6 text-[13px]">${it.nip}</td>
-                    <td class="py-4 px-6 text-[13px]">${it.alamat}</td>
-                    <td class="py-4 px-6 text-[13px]">${it.telepon}</td>
+                <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                    <td class="py-4 px-6 text-[13px] text-[#4a9bc8] border-r border-gray-100">${i+1}</td>
+                    <td class="py-4 px-6 text-[13px] text-gray-700 font-medium border-r border-gray-100 text-left">${it.nama}</td>
+                    <td class="py-4 px-6 text-[13px] text-gray-600 border-r border-gray-100">${it.status}</td>
+                    <td class="py-4 px-6 text-[13px] text-[#4a9bc8] border-r border-gray-100 font-mono">${it.nip}</td>
+                    <td class="py-4 px-6 text-[13px] text-gray-600 border-r border-gray-100 text-left">${it.alamat}</td>
+                    <td class="py-4 px-6 text-[13px] text-gray-600 border-r border-gray-100">${it.telepon}</td>
                     <td class="py-4 px-6 text-center whitespace-nowrap">
-                        <button onclick="tampilkanEdit(${i})" class="text-gray-700 hover:text-[#2a93c9] mr-3 transition" title="Edit">
-                            <i class="fa-solid fa-pen"></i>
-                        </button>
-                        <button onclick="hapus(${i})" class="text-gray-700 hover:text-red-500 transition" title="Hapus">
-                            <i class="fa-solid fa-trash"></i>
-                        </button>
+                        <div class="flex justify-center gap-3 text-lg">
+                            <button onclick="tampilkanEdit(${i})" class="text-[#2a93c9] hover:opacity-70 transition" title="Edit">
+                                <i class="fa-solid fa-pen"></i>
+                            </button>
+                            <button onclick="hapus(${i})" class="text-red-500 hover:opacity-70 transition" title="Hapus">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
                     </td>
                 </tr>`;
             });
         }
 
+        // --- NAVIGATION ---
         function tampilkanTambah() {
             // Kosongkan form
             document.getElementById('add-nama').value = '';
@@ -343,6 +251,7 @@
             document.getElementById('viewTabel').classList.remove('hidden');
         }
 
+        // --- CRUD ACTIONS ---
         function prosesTambah() {
             const nama = document.getElementById('add-nama').value;
             const status = document.getElementById('add-status').value;
@@ -388,52 +297,5 @@
 
         document.addEventListener('DOMContentLoaded', render);
     </script>
-<script>
-(function(){
-  const sidebar = document.getElementById('sidebar');
-  const submenu = document.getElementById('submenuDataMaster');
-  const btn = document.getElementById('dataMasterBtn');
-  const hamburger = document.getElementById('hamburgerToggle');
-  const arrow = document.getElementById('arrow');
-  if(!sidebar || !submenu || !btn){ return; }
-
-  const KEY = 'data_master_open';
-  const isMin = () => sidebar.classList.contains('w-[80px]');
-
-  const render = () => {
-    const open = localStorage.getItem(KEY) === '1';
-    if(open && !isMin()) {
-      submenu.classList.remove('hidden');
-      submenu.classList.add('flex');
-      if (arrow) arrow.classList.add('rotate-180');
-    } else {
-      submenu.classList.add('hidden');
-      submenu.classList.remove('flex');
-      if (arrow) arrow.classList.remove('rotate-180');
-    }
-  };
-
-  render();
-
-  btn.addEventListener('click', function(e){
-    e.preventDefault();
-    e.stopImmediatePropagation();
-    const open = localStorage.getItem(KEY) === '1';
-    localStorage.setItem(KEY, open ? '0' : '1');
-    if(isMin() && !open && hamburger){
-      hamburger.click();
-      setTimeout(render, 0);
-      return;
-    }
-    render();
-  }, true);
-
-  if (hamburger) {
-    hamburger.addEventListener('click', function(){
-      setTimeout(render, 0);
-    }, true);
-  }
-})();
-</script>
 </body>
 </html>

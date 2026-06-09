@@ -10,90 +10,27 @@
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f4f6f9; }
         .nav-icon { min-width: 24px; text-align: center; }
-        
-        /* Custom scrollbar untuk sidebar agar rapi */
         .sidebar-scroll::-webkit-scrollbar { width: 4px; }
-        .sidebar-scroll::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }    </style>
+        .sidebar-scroll::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .nav-active-indicator { position: relative; }
+        .nav-active-indicator::before { content: ""; position: absolute; left: -48px; top: 50%; transform: translateY(-50%); width: 5px; height: 22px; background-color: #2a93c9; border-radius: 0 4px 4px 0; }
+        .sidebar-text { transition: all 0.2s ease; }    
+    </style>
 </head>
 <body class="flex h-screen overflow-hidden text-gray-800">
 
-    <aside id="sidebar" class="w-[260px] bg-white h-screen flex flex-col justify-between shadow-[2px_0_10px_rgba(0,0,0,0.03)] flex-shrink-0 z-20 transition-all duration-300 relative">
-        <div class="flex-1 overflow-y-auto sidebar-scroll pb-4">
-            <div id="logo-container" class="h-[90px] flex items-center px-6 gap-3 border-b border-transparent transition-all duration-300 overflow-hidden sticky top-0 bg-white z-10">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/2/28/Lambang_Badan_Pusat_Statistik_%28BPS%29_Indonesia.svg" alt="Logo BPS" class="w-[45px] flex-shrink-0">
-                <div class="sidebar-text text-[13px] font-bold leading-tight uppercase tracking-tight text-black whitespace-nowrap transition-opacity duration-200">
-                    BPS <br> KOTA SUKABUMI
-                </div>
-            </div>
-
-            <nav class="mt-6 flex flex-col gap-2 px-4">
-                <a href="/dashboard" class="nav-link flex items-center justify-start gap-4 px-3 py-2.5 rounded-md text-gray-700 font-medium transition-all duration-300 hover:text-[#2a93c9] hover:bg-gray-50 overflow-hidden">
-                    <i class="fa-solid fa-house nav-icon text-lg"></i>
-                    <span class="sidebar-text text-[14px] whitespace-nowrap">Dashboard</span>
-                </a>
-                
-                <a href="#" class="nav-link flex items-center justify-start gap-4 px-3 py-2.5 rounded-md text-gray-700 font-medium transition-all duration-300 hover:text-[#2a93c9] hover:bg-gray-50 overflow-hidden">
-                    <i class="fa-solid fa-users nav-icon text-lg"></i>
-                    <span class="sidebar-text text-[14px] whitespace-nowrap">Manajemen User</span>
-                </a>
-
-                <a href="/daftar-template" class="nav-link flex items-center justify-start gap-4 px-3 py-2.5 rounded-md text-[#2a93c9] font-medium transition-all duration-300 overflow-hidden">
-                    <i class="fa-solid fa-print nav-icon text-lg"></i>
-                    <span class="sidebar-text text-[14px] whitespace-nowrap">Daftar Template SK</span>
-                </a>
-
-                <div class="flex flex-col">
-                    <button id="dataMasterBtn" class="nav-link w-full flex items-center justify-start gap-4 px-3 py-2.5 rounded-md text-gray-700 font-medium transition-all duration-300 hover:text-[#2a93c9] hover:bg-gray-50 overflow-hidden cursor-pointer">
-                        <i class="fa-solid fa-hard-drive nav-icon text-lg"></i>
-                        <span class="sidebar-text text-[14px] whitespace-nowrap">Data Master</span>
-                        <i class="fa-solid fa-chevron-down ml-auto text-[10px] sidebar-text" id="arrow"></i>
-                    </button>
-                    
-                    <div id="submenuDataMaster" class="hidden flex-col pl-12 pr-3 py-2 space-y-4">
-                        <a href="/data-teknis" class="sidebar-text text-[13px] text-gray-700 hover:text-[#2a93c9] transition-colors flex items-center gap-2 whitespace-nowrap">
-                            <span>&middot;</span> Data Teknis dan Administrasi
-                        </a>
-                        <a href="/data-kpa" class="sidebar-text text-[13px] text-gray-700 hover:text-[#2a93c9] transition-colors flex items-center gap-2 whitespace-nowrap">
-                            <span>&middot;</span> Data KPA & DIPA
-                        </a>
-                        <a href="/data-pegawai" class="sidebar-text text-[13px] text-gray-700 hover:text-[#2a93c9] transition-colors flex items-center gap-2 whitespace-nowrap">
-                            <span>&middot;</span> Data Pegawai dan Mitra Statistik
-                        </a>
-                        <a href="/data-jenis-sk" class="sidebar-text text-[13px] text-gray-700 hover:text-[#2a93c9] transition-colors flex items-center gap-2 whitespace-nowrap">
-                            <span>&middot;</span> Data Jenis SK
-                        </a>
-                    </div>
-                </div>
-
-                <a href="#" class="nav-link flex items-center justify-start gap-4 px-3 py-2.5 rounded-md text-gray-700 font-medium transition-all duration-300 hover:text-[#2a93c9] hover:bg-gray-50 overflow-hidden">
-                    <i class="fa-solid fa-folder-open nav-icon text-lg"></i>
-                    <span class="sidebar-text text-[14px] whitespace-nowrap">Arsip / Monitoring SK</span>
-                </a>
-
-                <a href="#" class="nav-link flex items-center justify-start gap-4 px-3 py-2.5 rounded-md text-gray-700 font-medium transition-all duration-300 hover:text-[#2a93c9] hover:bg-gray-50 overflow-hidden">
-                    <i class="fa-solid fa-gear nav-icon text-lg"></i>
-                    <span class="sidebar-text text-[14px] whitespace-nowrap">Pengaturan</span>
-                </a>
-            </nav>
-        </div>
-        
-        <div class="p-6 border-t border-gray-100 bg-white sticky bottom-0">
-            <a href="/" class="nav-link flex items-center justify-start gap-4 text-gray-800 font-medium transition-all duration-300 hover:text-red-500 overflow-hidden">
-                <i class="fa-solid fa-right-from-bracket nav-icon text-xl"></i>
-                <span class="sidebar-text text-[14px] whitespace-nowrap">Logout</span>
-            </a>
-        </div>
-    </aside>
+    @include('components.sidebar', ['active' => 'daftar-template'])
 
     <main class="flex-1 flex flex-col h-screen overflow-y-auto transition-all duration-300 relative">
+        
         <header class="h-[80px] flex items-center justify-between px-8 flex-shrink-0 sticky top-0 bg-[#f4f6f9] z-10">
-            <button id="hamburgerToggle" class="w-[35px] h-[35px] bg-[#3ba8db] rounded flex flex-col items-center justify-center gap-[5px] hover:bg-[#2a93c9] transition cursor-pointer shadow-sm">
+            <button id="hamburgerToggle" class="w-[35px] h-[35px] bg-[#2a93c9] rounded flex flex-col items-center justify-center gap-[5px] hover:bg-[#1d7aa9] transition cursor-pointer shadow-sm">
                 <div class="w-[18px] h-[2px] bg-white"></div>
                 <div class="w-[18px] h-[2px] bg-white"></div>
                 <div class="w-[18px] h-[2px] bg-white"></div>
             </button>
             
-            <div class="w-10 h-10 rounded-full border border-gray-300 p-[2px] cursor-pointer hover:shadow-md transition bg-white">
+            <div class="w-10 h-10 rounded-full border border-gray-200 p-[2px] cursor-pointer hover:shadow-md transition bg-white">
                 <img src="https://i.pravatar.cc/150?img=11" alt="User Avatar" class="w-full h-full rounded-full object-cover">
             </div>
         </header>
@@ -174,45 +111,6 @@
     </main>
 
     <script>
-        // --- SCRIPT HAMBURGER SIDEBAR ---
-        const hamburgerBtn = document.getElementById('hamburgerToggle');
-        const sidebar = document.getElementById('sidebar');
-        const logoContainer = document.getElementById('logo-container');
-        const textsToHide = document.querySelectorAll('.sidebar-text');
-        const navLinks = document.querySelectorAll('.nav-link');
-        const submenuDataMaster = document.getElementById('submenuDataMaster');
-
-        hamburgerBtn.addEventListener('click', () => {
-            sidebar.classList.toggle('w-[260px]');
-            sidebar.classList.toggle('w-[80px]');
-            textsToHide.forEach(text => text.classList.toggle('hidden'));
-            logoContainer.classList.toggle('px-6');
-            logoContainer.classList.toggle('justify-center');
-            navLinks.forEach(link => {
-                link.classList.toggle('justify-start');
-                link.classList.toggle('justify-center');
-                link.classList.toggle('px-3');
-            });
-            if (sidebar.classList.contains('w-[80px]')) {
-                submenuDataMaster.classList.add('hidden');
-                submenuDataMaster.classList.remove('flex');
-            }
-        });
-
-        // --- SCRIPT DROPDOWN DATA MASTER ---
-        const dataMasterBtn = document.getElementById('dataMasterBtn');
-        dataMasterBtn.addEventListener('click', () => {
-            if (sidebar.classList.contains('w-[260px]')) {
-                submenuDataMaster.classList.remove('hidden');
-                submenuDataMaster.classList.add('flex');
-                submenuDataMaster.classList.add('flex');
-            } else {
-                hamburgerBtn.click();
-                submenuDataMaster.classList.remove('hidden');
-                submenuDataMaster.classList.add('flex');
-            }
-        });
-
         // --- DATA DINAMIS UNTUK JENIS SK ---
         const dataJenisSK = {
             "Umum": ["SK Pengelola Anggaran", "SK B", "SK C"],
@@ -360,52 +258,5 @@
             window.location.href = '/daftar-template';
         });
     </script>
-<script>
-(function(){
-  const sidebar = document.getElementById('sidebar');
-  const submenu = document.getElementById('submenuDataMaster');
-  const btn = document.getElementById('dataMasterBtn');
-  const hamburger = document.getElementById('hamburgerToggle');
-  const arrow = document.getElementById('arrow');
-  if(!sidebar || !submenu || !btn){ return; }
-
-  const KEY = 'data_master_open';
-  const isMin = () => sidebar.classList.contains('w-[80px]');
-
-  const render = () => {
-    const open = localStorage.getItem(KEY) === '1';
-    if(open && !isMin()) {
-      submenu.classList.remove('hidden');
-      submenu.classList.add('flex');
-      if (arrow) arrow.classList.add('rotate-180');
-    } else {
-      submenu.classList.add('hidden');
-      submenu.classList.remove('flex');
-      if (arrow) arrow.classList.remove('rotate-180');
-    }
-  };
-
-  render();
-
-  btn.addEventListener('click', function(e){
-    e.preventDefault();
-    e.stopImmediatePropagation();
-    const open = localStorage.getItem(KEY) === '1';
-    localStorage.setItem(KEY, open ? '0' : '1');
-    if(isMin() && !open && hamburger){
-      hamburger.click();
-      setTimeout(render, 0);
-      return;
-    }
-    render();
-  }, true);
-
-  if (hamburger) {
-    hamburger.addEventListener('click', function(){
-      setTimeout(render, 0);
-    }, true);
-  }
-})();
-</script>
 </body>
 </html>
