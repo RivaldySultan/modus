@@ -9,58 +9,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #eef3f7; }
-        .nav-icon { min-width: 24px; text-align: center; }
-        
-        .nav-active-main { position: relative; }
-        .nav-active-main::before {
-            content: ""; position: absolute; left: -16px; top: 50%;
-            transform: translateY(-50%); width: 5px; height: 22px;
-            background-color: #2491c9; border-radius: 0 4px 4px 0;
-        }
-
-        .hover-card { transition: all 0.2s ease; }
-        .hover-card:hover { transform: translateY(-3px); border-color: #2491c9; box-shadow: 0 10px 15px -3px rgba(36, 145, 201, 0.1); }
-        
-        /* Custom scrollbar untuk form panjang */
-        .custom-scroll::-webkit-scrollbar { width: 6px; }
-        .custom-scroll::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .card-title-container { position: relative; display: inline-block; padding-bottom: 12px; margin-bottom: 20px; }
+        .card-title-container::after { content: ""; position: absolute; bottom: 0; left: 0; width: 100%; height: 1.5px; background-color: #2491c9; }
+        .sidebar-scroll::-webkit-scrollbar { width: 4px; }
+        .sidebar-scroll::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
     </style>
 </head>
 <body class="flex h-screen overflow-hidden text-gray-800">
 
-    <aside id="sidebar" class="w-[260px] bg-white h-screen flex flex-col justify-between shadow-[2px_0_10px_rgba(0,0,0,0.03)] flex-shrink-0 z-20 transition-all duration-300">
-        <div class="overflow-y-auto">
-            <div id="logo-container" class="h-[90px] flex items-center px-6 gap-3 border-b border-transparent transition-all duration-300 overflow-hidden">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/2/28/Lambang_Badan_Pusat_Statistik_%28BPS%29_Indonesia.svg" alt="Logo BPS" class="w-[45px] flex-shrink-0">
-                <div class="sidebar-text text-[13px] font-bold leading-tight uppercase tracking-tight text-black whitespace-nowrap">
-                    BPS <br> Kota Sukabumi
-                </div>
-            </div>
+    @include('components.sidebar-user', ['active' => 'dashboard'])
 
-            <nav class="mt-6 flex flex-col gap-1 px-4">
-                <a href="{{ url('/user/dashboard') }}" class="nav-link flex items-center justify-start gap-4 px-3 py-2.5 rounded-md text-gray-700 font-medium transition-all duration-300 hover:text-[#2491c9] hover:bg-gray-50 overflow-hidden">
-                    <i class="fa-solid fa-house nav-icon text-lg"></i>
-                    <span class="sidebar-text text-[14px] whitespace-nowrap">Dashboard User</span>
-                </a>
-
-                <a href="{{ url('/user/buat-sk') }}" class="nav-link nav-active-main flex items-center justify-start gap-4 px-3 py-2.5 rounded-md text-[#2491c9] font-medium transition-all duration-300 hover:bg-gray-50 overflow-hidden">
-                    <i class="fa-solid fa-file-signature nav-icon text-lg"></i>
-                    <span class="sidebar-text text-[14px] whitespace-nowrap">Buat SK</span>
-                </a>
-            </nav>
-        </div>
-
-        <div class="p-6 mb-2">
-            <a href="/" class="nav-link flex items-center justify-start gap-4 text-gray-800 font-medium transition-all duration-300 hover:text-red-500 overflow-hidden">
-                <i class="fa-solid fa-right-from-bracket nav-icon text-xl"></i>
-                <span class="sidebar-text text-[14px] whitespace-nowrap">Logout</span>
-            </a>
-        </div>
-    </aside>
-
-    <main class="flex-1 flex flex-col h-screen overflow-y-auto transition-all duration-300 custom-scroll">
-        
-        <header class="h-[80px] flex items-center justify-between px-8 flex-shrink-0 bg-white shadow-sm sticky top-0 z-10">
+    <main class="flex-1 flex flex-col h-screen overflow-y-auto transition-all duration-300">
+        <header class="h-[80px] flex items-center justify-between px-8 flex-shrink-0 bg-[#eef3f7] sticky top-0 z-10">
             <button id="hamburgerToggle" class="w-[38px] h-[35px] bg-[#2491c9] rounded flex flex-col items-center justify-center gap-[4px] hover:bg-[#1d7aa9] transition cursor-pointer shadow-sm">
                 <div class="w-[20px] h-[3px] bg-white rounded-full"></div>
                 <div class="w-[20px] h-[3px] bg-white rounded-full"></div>
@@ -234,23 +194,6 @@
     </main>
 
     <script>
-        // Toggle Sidebar
-        const hamburgerBtn = document.getElementById('hamburgerToggle');
-        const sidebar = document.getElementById('sidebar');
-        const logoContainer = document.getElementById('logo-container');
-        const textsToHide = document.querySelectorAll('.sidebar-text');
-        const navLinks = document.querySelectorAll('.nav-link');
-
-        hamburgerBtn.addEventListener('click', () => {
-            sidebar.classList.toggle('w-[260px]');
-            sidebar.classList.toggle('w-[80px]');
-            textsToHide.forEach(text => text.classList.toggle('hidden'));
-            logoContainer.classList.toggle('px-6');
-            logoContainer.classList.toggle('justify-center');
-            navLinks.forEach(link => {
-                link.classList.toggle('justify-start'); link.classList.toggle('justify-center'); link.classList.toggle('px-3');
-            });
-        });
 
         // LOGIKA 3-STEP FORM
         const step1 = document.getElementById('step1-jenis');
