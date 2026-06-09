@@ -9,18 +9,21 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f4f6f9; }
+        .nav-icon { min-width: 24px; text-align: center; }
+        .sidebar-scroll::-webkit-scrollbar { width: 4px; }
+        .sidebar-scroll::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .sidebar-text { transition: all 0.2s ease; }
         
         .form-input-custom {
             width: 100%;
             border: 1px solid #93c5fd; 
             border-radius: 6px;
             height: 40px;
-            padding: 0 12px;
+            padding: 0 16px;
             color: #4a5568;
             font-size: 13px;
             outline: none;
-            background-color: white;
-            transition: border-color 0.2s;
+            transition: all 0.2s;
         }
         .form-input-custom:focus {
             border-color: #3b82f6; 
@@ -55,7 +58,7 @@
                     </button>
                 </div>
 
-                <div class="bg-white rounded border border-gray-200 shadow-sm overflow-hidden min-h-[500px]">
+                <div class="bg-white rounded border border-[#e2e8f0] shadow-sm overflow-hidden min-h-[500px]">
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="bg-[#2a93c9] text-white">
@@ -67,11 +70,12 @@
                             </tr>
                         </thead>
                         <tbody id="tabelDummy" class="text-gray-700">
-                            </tbody>
+                        </tbody>
                     </table>
                 </div>
             </div>
 
+            <!-- Form Edit & Tambah (Tetap di sini agar SPA berjalan) -->
             <div id="view-edit" class="hidden">
                 <h1 class="text-[22px] font-semibold text-black tracking-tight mb-8">Edit Data Teknis dan Administrasi</h1>
                 <div class="flex justify-center mt-10">
