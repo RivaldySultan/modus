@@ -6,15 +6,15 @@
         </div>
 
         <nav class="mt-4 flex flex-col gap-1">
-            <a href="/dashboard" class="nav-link flex items-center gap-4 pl-5 pr-4 py-3 font-medium transition-all duration-300 border-l-[4px] {{ ($active ?? '') == 'dashboard' ? 'border-[#2a93c9] text-[#2a93c9] bg-blue-50/50' : 'border-transparent text-gray-700 hover:text-[#2a93c9] hover:bg-gray-50' }}">
+            <a href="{{ url('/dashboard') }}" class="nav-link flex items-center gap-4 pl-5 pr-4 py-3 font-medium transition-all duration-300 border-l-[4px] {{ ($active ?? '') == 'dashboard' ? 'border-[#2a93c9] text-[#2a93c9] bg-blue-50/50' : 'border-transparent text-gray-700 hover:text-[#2a93c9] hover:bg-gray-50' }}">
                 <i class="fa-solid fa-house nav-icon text-lg"></i><span class="sidebar-text text-[14px]">Dashboard</span>
             </a>
             
-            <a href="/manajemen-user" class="nav-link flex items-center gap-4 pl-5 pr-4 py-3 font-medium transition-all duration-300 border-l-[4px] {{ ($active ?? '') == 'manajemen-user' ? 'border-[#2a93c9] text-[#2a93c9] bg-blue-50/50' : 'border-transparent text-gray-700 hover:text-[#2a93c9] hover:bg-gray-50' }}">
+            <a href="{{ url('manajemen-user') }}" class="nav-link flex items-center gap-4 pl-5 pr-4 py-3 font-medium transition-all duration-300 border-l-[4px] {{ ($active ?? '') == 'manajemen-user' ? 'border-[#2a93c9] text-[#2a93c9] bg-blue-50/50' : 'border-transparent text-gray-700 hover:text-[#2a93c9] hover:bg-gray-50' }}">
                 <i class="fa-solid fa-users nav-icon text-lg"></i><span class="sidebar-text text-[14px]">Manajemen User</span>
             </a>
 
-            <a href="/daftar-template" class="nav-link flex items-center gap-4 pl-5 pr-4 py-3 font-medium transition-all duration-300 border-l-[4px] {{ ($active ?? '') == 'daftar-template' ? 'border-[#2a93c9] text-[#2a93c9] bg-blue-50/50' : 'border-transparent text-gray-700 hover:text-[#2a93c9] hover:bg-gray-50' }}">
+            <a href="{{ url('/daftar-template') }}" class="nav-link flex items-center gap-4 pl-5 pr-4 py-3 font-medium transition-all duration-300 border-l-[4px] {{ ($active ?? '') == 'daftar-template' ? 'border-[#2a93c9] text-[#2a93c9] bg-blue-50/50' : 'border-transparent text-gray-700 hover:text-[#2a93c9] hover:bg-gray-50' }}">
                 <i class="fa-solid fa-print nav-icon text-lg"></i><span class="sidebar-text text-[14px]">Daftar Template SK</span>
             </a>
 
@@ -25,19 +25,19 @@
                 </button>
                 
                 <div id="submenuDataMaster" class="hidden flex-col pl-14 pr-4 py-2 space-y-4 bg-gray-50/50 border-y border-gray-100">
-                    <a href="/data-teknis" title="Data Teknis dan Administrasi" class="sidebar-text text-[13px] block whitespace-nowrap overflow-hidden text-ellipsis {{ ($active ?? '') == 'data-teknis' ? 'text-[#2a93c9] font-bold' : 'text-gray-600 hover:text-[#2a93c9]' }}"><span class="mr-1">&middot;</span> Data Teknis dan Administrasi</a>
+                    <a href="{{ url('/data-teknis') }}" title="Data Teknis dan Administrasi" class="sidebar-text text-[13px] block whitespace-nowrap overflow-hidden text-ellipsis {{ ($active ?? '') == 'data-teknis' ? 'text-[#2a93c9] font-bold' : 'text-gray-600 hover:text-[#2a93c9]' }}"><span class="mr-1">&middot;</span> Data Teknis dan Administrasi</a>
                     
-                    <a href="/data-kpa" title="Data KPA & DIPA" class="sidebar-text text-[13px] block whitespace-nowrap overflow-hidden text-ellipsis {{ ($active ?? '') == 'data-kpa' ? 'text-[#2a93c9] font-bold' : 'text-gray-600 hover:text-[#2a93c9]' }}"><span class="mr-1">&middot;</span> Data KPA & DIPA</a>
+                    <a href="{{ url('/data-kpa') }}" title="Data KPA & DIPA" class="sidebar-text text-[13px] block whitespace-nowrap overflow-hidden text-ellipsis {{ ($active ?? '') == 'data-kpa' ? 'text-[#2a93c9] font-bold' : 'text-gray-600 hover:text-[#2a93c9]' }}"><span class="mr-1">&middot;</span> Data KPA & DIPA</a>
                     
-                    <a href="/data-pegawai" title="Data Pegawai dan Mitra Statistik" class="sidebar-text text-[13px] block whitespace-nowrap overflow-hidden text-ellipsis {{ ($active ?? '') == 'data-pegawai' ? 'text-[#2a93c9] font-bold' : 'text-gray-600 hover:text-[#2a93c9]' }}"><span class="mr-1">&middot;</span> Data Pegawai dan Mitra Statistik</a>
+                    <a href="{{ url('/data-pegawai') }}" title="Data Pegawai dan Mitra Statistik" class="sidebar-text text-[13px] block whitespace-nowrap overflow-hidden text-ellipsis {{ ($active ?? '') == 'data-pegawai' ? 'text-[#2a93c9] font-bold' : 'text-gray-600 hover:text-[#2a93c9]' }}"><span class="mr-1">&middot;</span> Data Pegawai dan Mitra Statistik</a>
                     
-                    <a href="/data-jenis-sk" title="Data Jenis SK" class="sidebar-text text-[13px] block whitespace-nowrap overflow-hidden text-ellipsis {{ ($active ?? '') == 'data-jenis-sk' ? 'text-[#2a93c9] font-bold' : 'text-gray-600 hover:text-[#2a93c9]' }}"><span class="mr-1">&middot;</span> Data Jenis SK</a>
+                    <a href="{{ url('/data-jenis-sk') }}" title="Data Jenis SK" class="sidebar-text text-[13px] block whitespace-nowrap overflow-hidden text-ellipsis {{ ($active ?? '') == 'data-jenis-sk' ? 'text-[#2a93c9] font-bold' : 'text-gray-600 hover:text-[#2a93c9]' }}"><span class="mr-1">&middot;</span> Data Jenis SK</a>
                     
-                    <a href="/data-jabatan" title="Data Jabatan Peserta" class="sidebar-text text-[13px] block whitespace-nowrap overflow-hidden text-ellipsis {{ ($active ?? '') == 'data-jabatan' ? 'text-[#2a93c9] font-bold' : 'text-gray-600 hover:text-[#2a93c9]' }}"><span class="mr-1">&middot;</span> Data Jabatan Peserta</a>
+                    <a href="{{ url('/data-jabatan') }}" title="Data Jabatan Peserta" class="sidebar-text text-[13px] block whitespace-nowrap overflow-hidden text-ellipsis {{ ($active ?? '') == 'data-jabatan' ? 'text-[#2a93c9] font-bold' : 'text-gray-600 hover:text-[#2a93c9]' }}"><span class="mr-1">&middot;</span> Data Jabatan Peserta</a>
                 </div>
             </div>
 
-            <a href="/arsip" class="nav-link flex items-center gap-4 pl-5 pr-4 py-3 font-medium transition-all duration-300 border-l-[4px] {{ ($active ?? '') == 'arsip' ? 'border-[#2a93c9] text-[#2a93c9] bg-blue-50/50' : 'border-transparent text-gray-700 hover:text-[#2a93c9] hover:bg-gray-50' }}">
+            <a href="{{ url('/arsip') }}" class="nav-link flex items-center gap-4 pl-5 pr-4 py-3 font-medium transition-all duration-300 border-l-[4px] {{ ($active ?? '') == 'arsip' ? 'border-[#2a93c9] text-[#2a93c9] bg-blue-50/50' : 'border-transparent text-gray-700 hover:text-[#2a93c9] hover:bg-gray-50' }}">
                 <i class="fa-solid fa-folder-open nav-icon text-lg"></i><span class="sidebar-text text-[14px]">Arsip / Monitoring SK</span>
             </a>
             
@@ -45,10 +45,13 @@
     </div>
     
     <div class="border-t border-gray-100 bg-white sticky bottom-0">
-        <a href="/" class="nav-link flex items-center justify-start gap-4 pl-5 pr-4 py-5 text-gray-800 font-medium transition-all duration-300 border-l-[4px] border-transparent hover:border-red-500 hover:bg-red-50 hover:text-red-500">
-            <i class="fa-solid fa-right-from-bracket nav-icon text-xl"></i>
-            <span class="sidebar-text text-[14px] whitespace-nowrap">Logout</span>
-        </a>
+        <form action="{{ url('/logout') }}" method="POST" class="m-0 p-0">
+            @csrf
+            <button type="submit" class="nav-link w-full flex items-center justify-start gap-4 pl-5 pr-4 py-5 text-gray-800 font-medium transition-all duration-300 border-l-[4px] border-transparent hover:border-red-500 hover:bg-red-50 hover:text-red-500 bg-transparent cursor-pointer text-left focus:outline-none">
+                <i class="fa-solid fa-right-from-bracket nav-icon text-xl"></i>
+                <span class="sidebar-text text-[14px] whitespace-nowrap">Logout</span>
+            </button>
+        </form>
     </div>
 </aside>
 

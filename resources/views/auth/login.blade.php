@@ -28,9 +28,9 @@
             max-width: 1050px;
             height: 580px;
             display: flex;
-            border-radius: 8px; /* Sedikit dilunakkan sudutnya sesuai gambar asli */
-            border: none; /* INI KUNCI MENGHILANGKAN GARIS ARTEFAK */
-            box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.3); /* Shadow fokus di luar, tanpa mengenai border */
+            border-radius: 8px;
+            border: none;
+            box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.3);
             position: relative;
             z-index: 10;
         }
@@ -55,7 +55,6 @@
             padding: 70px 60px;
         }
 
-        /* Input Form di-set putih bersih sesuai gambar pertama */
         .form-input {
             background-color: #ffffff;
             border: none;
@@ -64,7 +63,7 @@
             width: 100%;
             outline: none;
             color: #333;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); /* Sedikit kedalaman pada input */
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
         }
 
         .form-label {
@@ -123,18 +122,23 @@
     </div>
 
     <div class="panel-right-content">
-        <form id="loginForm" class="w-full max-w-[340px]">
-            
-            <div id="error-msg" class="hidden bg-red-500/90 text-white text-[12px] font-bold px-3 py-2 rounded mb-4 text-center tracking-wide"></div>
+        <form action="{{ url('/login') }}" method="POST" class="w-full max-w-[340px]">
+            @csrf
+
+            @if ($errors->any())
+                <div class="bg-red-500/90 text-white text-[12px] font-bold px-3 py-2 rounded mb-4 text-center tracking-wide">
+                    {{ $errors->first() }}
+                </div>
+            @endif
 
             <div class="mb-5">
                 <label for="username" class="form-label">Username</label>
-                <input type="text" id="username" name="username" class="form-input focus:ring-2 focus:ring-[#7bb3ff]">
+                <input type="text" id="username" name="username" value="{{ old('username') }}" class="form-input focus:ring-2 focus:ring-[#7bb3ff]" required>
             </div>
 
             <div class="mb-4">
                 <label for="password" class="form-label">Password</label>
-                <input type="password" id="password" name="password" class="form-input focus:ring-2 focus:ring-[#7bb3ff]">
+                <input type="password" id="password" name="password" class="form-input focus:ring-2 focus:ring-[#7bb3ff]" required>
             </div>
 
             <div class="flex items-center mb-10">
@@ -148,38 +152,6 @@
         </form>
     </div>
 </div>
-
-<script>
-    document.getElementById('loginForm').addEventListener('submit', function(event) {
-        event.preventDefault(); // Mencegah halaman refresh
-
-        const username = document.getElementById('username').value.trim();
-        const password = document.getElementById('password').value.trim();
-        const errorMsg = document.getElementById('error-msg');
-
-        // 1. Validasi Input Kosong
-        if (username === '' || password === '') {
-            errorMsg.innerText = 'Username dan Password tidak boleh kosong!';
-            errorMsg.classList.remove('hidden');
-            return;
-        }
-
-        // 2. Logika Cek Akun (Dummy Data)
-        if (username === 'admin' && password === 'admin123') {
-            errorMsg.classList.add('hidden');
-            window.location.href = '/dashboard'; 
-        } 
-        else if (username === 'user' && password === 'user123') {
-            errorMsg.classList.add('hidden');
-            window.location.href = '/user/dashboard'; 
-        } 
-        // 3. Jika akun salah
-        else {
-            errorMsg.innerText = 'Username atau Password salah!';
-            errorMsg.classList.remove('hidden');
-        }
-    });
-</script>
 
 </body>
 </html>

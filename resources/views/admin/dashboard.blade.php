@@ -13,14 +13,6 @@
         /* CSS Khusus Dashboard */
         .card-title-container { position: relative; display: inline-block; padding-bottom: 12px; margin-bottom: 20px; }
         .card-title-container::after { content: ""; position: absolute; bottom: 0; left: 0; width: 100%; height: 1.5px; background-color: #2a93c9; }
-        
-        /* CSS Sidebar Component */
-        .nav-icon { min-width: 24px; text-align: center; }
-        .sidebar-scroll::-webkit-scrollbar { width: 4px; }
-        .sidebar-scroll::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
-        .nav-active-indicator { position: relative; }
-        .nav-active-indicator::before { content: ""; position: absolute; left: -48px; top: 50%; transform: translateY(-50%); width: 5px; height: 22px; background-color: #2a93c9; border-radius: 0 4px 4px 0; }
-        .sidebar-text { transition: all 0.2s ease; }    
     </style>
 </head>
 <body class="flex h-screen overflow-hidden text-gray-800">
@@ -35,14 +27,21 @@
                 <div class="w-[18px] h-[2px] bg-white"></div>
                 <div class="w-[18px] h-[2px] bg-white"></div>
             </button>
-            <div class="w-10 h-10 rounded-full border border-gray-200 p-[2px] cursor-pointer hover:shadow-md transition bg-white">
-                <img src="https://i.pravatar.cc/150?img=11" alt="User Avatar" class="w-full h-full rounded-full object-cover">
+            
+            <div class="flex items-center gap-3">
+                <div class="text-right hidden md:block">
+                    <p class="text-[13px] font-bold text-gray-800">{{ auth()->user()->nama ?? 'Guest' }}</p>
+                    <p class="text-[11px] text-gray-500 font-medium uppercase">{{ auth()->user()->role ?? '' }}</p>
+                </div>
+                <div class="w-10 h-10 rounded-full border border-gray-300 p-[2px] cursor-pointer hover:shadow-md transition bg-white">
+                    <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->nama ?? 'U') }}&background=2a93c9&color=fff" class="rounded-full w-full h-full object-cover">
+                </div>
             </div>
         </header>
 
         <div class="px-8 pt-2 pb-10">
             <h1 class="text-[26px] font-bold text-black mb-8">
-                Dashboard <span class="text-[15px] font-semibold text-gray-800 ml-1">admin</span>
+                Dashboard <span class="text-[15px] font-semibold text-gray-800 ml-1 uppercase">{{ auth()->user()->role ?? '' }}</span>
             </h1>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
