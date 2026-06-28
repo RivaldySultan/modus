@@ -4,7 +4,11 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TemplateSkController;
-use App\Http\Controllers\JabatanController;
+use App\Http\Controllers\JabatanPesertaController;
+use App\Http\Controllers\DataTeknisController;
+use App\Http\Controllers\DataKpaController;
+use App\Http\Controllers\DataPegawaiController;
+use App\Http\Controllers\JenisSkController;
 
 // Rute Publik (Tidak perlu login)
 Route::get('/', [AuthController::class, 'index'])->name('login');
@@ -29,28 +33,47 @@ Route::middleware('auth')->group(function () {
     Route::put('/edit-user/{id}', [UserController::class, 'update']);
     Route::delete('/hapus-user/{id}', [UserController::class, 'destroy']);
 
-    // --- DATA MASTER (Sementara View Langsung) ---
-    Route::get('/data-teknis', function () { return view('admin.data-teknis'); });
-    Route::get('/tambah-teknis', function () { return view('admin.tambah-teknis'); });
-    
-    Route::get('/data-kpa', function () { return view('admin.data-kpa'); });
-    Route::get('/tambah-kpa', function () { return view('admin.tambah-kpa'); });
-    
-    Route::get('/data-pegawai', function () { return view('admin.data-pegawai'); });
-    Route::get('/tambah-pegawai', function () { return view('admin.tambah-pegawai'); });
-    
-    Route::get('/data-jenis-sk', function () { return view('admin.data-jenis-sk'); });
-    Route::get('/tambah-jenis-sk', function () { return view('admin.tambah-jenis-sk'); });
-    Route::get('/edit-jenis-sk', function () { return view('admin.edit-jenis-sk'); });
-    
-    // --- MANAJEMEN DATA JABATAN ---
-    Route::get('/data-jabatan', [JabatanController::class, 'index']);
-    Route::get('/tambah-jabatan', [JabatanController::class, 'create']);
-    Route::post('/tambah-jabatan', [JabatanController::class, 'store']);
-    Route::get('/edit-jabatan/{id}', [JabatanController::class, 'edit']);
-    Route::put('/edit-jabatan/{id}', [JabatanController::class, 'update']);
-    Route::delete('/hapus-jabatan/{id}', [JabatanController::class, 'destroy']);
+    // --- MANAJEMEN DATA TEKNIS ---
+    Route::get('/data-teknis', [DataTeknisController::class, 'index']);
+    Route::get('/tambah-teknis', [DataTeknisController::class, 'create']);
+    Route::post('/tambah-teknis', [DataTeknisController::class, 'store']);
+    Route::get('/edit-teknis/{id}', [DataTeknisController::class, 'edit']);
+    Route::put('/edit-teknis/{id}', [DataTeknisController::class, 'update']);
+    Route::delete('/hapus-teknis/{id}', [DataTeknisController::class, 'destroy']);
 
+    // --- MANAJEMEN DATA KPA & DIPA ---
+    Route::get('/data-kpa', [DataKpaController::class, 'index']);
+    Route::get('/tambah-kpa', [DataKpaController::class, 'create']);
+    Route::post('/tambah-kpa', [DataKpaController::class, 'store']);
+    Route::get('/edit-kpa/{id}', [DataKpaController::class, 'edit']);
+    Route::put('/edit-kpa/{id}', [DataKpaController::class, 'update']);
+    Route::delete('/hapus-kpa/{id}', [DataKpaController::class, 'destroy']);
+   
+    // --- MANAJEMEN DATA PEGAWAI ---
+    Route::get('/data-pegawai', [DataPegawaiController::class, 'index']);
+    Route::get('/tambah-pegawai', [DataPegawaiController::class, 'create']);
+    Route::post('/tambah-pegawai', [DataPegawaiController::class, 'store']);
+    Route::get('/edit-pegawai/{id}', [DataPegawaiController::class, 'edit']);
+    Route::put('/edit-pegawai/{id}', [DataPegawaiController::class, 'update']);
+    Route::delete('/hapus-pegawai/{id}', [DataPegawaiController::class, 'destroy']);
+
+    // --- MANAJEMEN DATA JABATAN PESERTA ---
+    Route::get('/data-jabatan', [JabatanPesertaController::class, 'index']);
+    Route::get('/tambah-jabatan', [JabatanPesertaController::class, 'create']);
+    Route::post('/tambah-jabatan', [JabatanPesertaController::class, 'store']);
+    Route::get('/edit-jabatan/{id}', [JabatanPesertaController::class, 'edit']);
+    Route::put('/edit-jabatan/{id}', [JabatanPesertaController::class, 'update']);
+    Route::delete('/hapus-jabatan/{id}', [JabatanPesertaController::class, 'destroy']);
+        
+    // --- MANAJEMEN DATA JENIS SK ---
+    Route::get('/data-jenis-sk', [JenisSkController::class, 'index']);
+    Route::get('/tambah-jenis-sk', [JenisSkController::class, 'create']);
+    Route::post('/tambah-jenis-sk', [JenisSkController::class, 'store']);
+    Route::get('/edit-jenis-sk/{id}', [JenisSkController::class, 'edit']);
+    Route::put('/edit-jenis-sk/{id}', [JenisSkController::class, 'update']);
+    Route::delete('/hapus-jenis-sk/{id}', [JenisSkController::class, 'destroy']);
+        
+    
     // --- DAFTAR TEMPLATE ---
     Route::get('/daftar-template', [TemplateSkController::class, 'index']);
     Route::get('/upload-template', [TemplateSkController::class, 'create']);

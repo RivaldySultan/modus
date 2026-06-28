@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tambah Data Teknis - MODUS BPS Kota Sukabumi</title>
+    <title>Edit Data Teknis - MODUS BPS Kota Sukabumi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -30,13 +30,14 @@
 
         <div class="px-8 pt-2 pb-10">
             
-            <h1 class="text-[22px] font-semibold text-black tracking-tight mb-8">Tambah Data Teknis dan Administrasi</h1>
+            <h1 class="text-[22px] font-semibold text-black tracking-tight mb-8">Edit Data Teknis dan Administrasi</h1>
             
             <div class="flex justify-center w-full mt-4">
                 <div class="bg-[#f8fafc] border border-gray-200 shadow-sm p-10 rounded-sm w-[450px]">
                     
-                    <form action="{{ url('/tambah-teknis') }}" method="POST">
+                    <form action="{{ url('/edit-teknis/' . $teknis->id) }}" method="POST">
                         @csrf
+                        @method('PUT')
                         
                         @if ($errors->any())
                             <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-5 text-[12px]">
@@ -52,9 +53,9 @@
                             <label class="block text-[#4a9bc8] text-[13px] mb-2 font-medium">Kelompok Bagian</label>
                             <div class="relative">
                                 <select name="keterangan" class="w-full border border-[#4a9bc8] rounded h-[40px] px-3 text-[#4a9bc8] text-[13px] outline-none appearance-none bg-white cursor-pointer" required>
-                                    <option value="" disabled selected>Pilih Kelompok...</option>
-                                    <option value="Umum" {{ old('keterangan') == 'Umum' ? 'selected' : '' }}>Umum</option>
-                                    <option value="Teknis" {{ old('keterangan') == 'Teknis' ? 'selected' : '' }}>Teknis</option>
+                                    <option value="" disabled>Pilih Kelompok...</option>
+                                    <option value="Umum" {{ $teknis->keterangan == 'Umum' ? 'selected' : '' }}>Umum</option>
+                                    <option value="Teknis" {{ $teknis->keterangan == 'Teknis' ? 'selected' : '' }}>Teknis</option>
                                 </select>
                                 <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-[#4a9bc8]">
                                     <i class="fa-solid fa-chevron-down text-[12px]"></i>
@@ -64,12 +65,12 @@
 
                         <div class="mb-5">
                             <label class="block text-[#4a9bc8] text-[13px] mb-2 font-medium">Nama Teknis/Administrasi</label>
-                            <input type="text" name="nama_teknis" value="{{ old('nama_teknis') }}" class="w-full border border-[#4a9bc8] rounded h-[40px] px-3 text-gray-700 outline-none focus:ring-1 focus:ring-[#4a9bc8] bg-white" required>
+                            <input type="text" name="nama_teknis" value="{{ $teknis->nama_teknis }}" class="w-full border border-[#4a9bc8] rounded h-[40px] px-3 text-gray-700 outline-none focus:ring-1 focus:ring-[#4a9bc8] bg-white" required>
                         </div>
 
                         <div class="mb-8">
                             <label class="block text-[#4a9bc8] text-[13px] mb-2 font-medium">Kode Teknis/Administrasi (Opsional)</label>
-                            <input type="text" name="kode_teknis" value="{{ old('kode_teknis') }}" class="w-full border border-[#4a9bc8] rounded h-[40px] px-3 text-gray-700 outline-none focus:ring-1 focus:ring-[#4a9bc8] bg-white">
+                            <input type="text" name="kode_teknis" value="{{ $teknis->kode_teknis }}" class="w-full border border-[#4a9bc8] rounded h-[40px] px-3 text-gray-700 outline-none focus:ring-1 focus:ring-[#4a9bc8] bg-white">
                         </div>
 
                         <div class="flex justify-between gap-4 mt-8">
@@ -77,7 +78,7 @@
                                 KEMBALI
                             </a>
                             <button type="submit" class="border border-[#4a9bc8] text-white bg-[#4a9bc8] px-8 py-2.5 rounded font-medium text-[13px] flex-1 hover:bg-[#3982a9] transition-colors">
-                                TAMBAH
+                                SIMPAN
                             </button>
                         </div>
                     </form>

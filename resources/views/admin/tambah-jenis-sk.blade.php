@@ -35,7 +35,7 @@
                 <div class="sidebar-text text-[13px] font-bold leading-tight uppercase tracking-tight text-black whitespace-nowrap">BPS <br> KOTA SUKABUMI</div>
             </div>
             <nav class="mt-6 flex flex-col gap-2 px-4">
-                <a href="/data-jenis-sk" class="nav-link flex items-center justify-start gap-4 px-3 py-2.5 rounded-md font-medium text-[#2a93c9] bg-blue-50 transition-all duration-300">
+                <a href="{{ url('/data-jenis-sk') }}" class="nav-link flex items-center justify-start gap-4 px-3 py-2.5 rounded-md font-medium text-[#2a93c9] bg-blue-50 transition-all duration-300">
                     <i class="fa-solid fa-arrow-left nav-icon text-lg"></i>
                     <span class="sidebar-text text-[14px] whitespace-nowrap">Kembali ke Tabel</span>
                 </a>
@@ -49,7 +49,7 @@
                 <div class="w-[18px] h-[2px] bg-white"></div><div class="w-[18px] h-[2px] bg-white"></div><div class="w-[18px] h-[2px] bg-white"></div>
             </button>
             <div class="w-10 h-10 rounded-full border border-gray-300 p-[2px] cursor-pointer hover:shadow-md transition bg-white">
-                <img src="https://i.pravatar.cc/150?img=11" alt="User Avatar" class="w-full h-full rounded-full object-cover">
+                <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->nama ?? 'U') }}&background=2a93c9&color=fff" alt="User Avatar" class="w-full h-full rounded-full object-cover">
             </div>
         </header>
 
@@ -58,13 +58,25 @@
             
             <div class="flex justify-center mt-4">
                 <div class="bg-white border border-[#e2e8f0] shadow-sm p-10 rounded-sm w-[450px]">
-                    <form id="formTambahJenisSk">
+                    <form action="{{ url('/tambah-jenis-sk') }}" method="POST">
+                        @csrf
+
+                        @if ($errors->any())
+                            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-5 text-[12px]">
+                                <ul>
+                                    @foreach ($errors->all() as $error)
+                                        <li>- {{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+
                         <div class="mb-5 relative">
                             <label class="block text-[#4a9bc8] text-[13px] mb-2 font-medium">Kelompok SK</label>
-                            <select id="input-kelompok" class="form-input-custom appearance-none text-[#4a9bc8]" required>
+                            <select name="kelompok_sk" class="form-input-custom appearance-none text-[#4a9bc8]" required>
                                 <option value="" disabled selected>Pilih Kelompok...</option>
-                                <option value="Umum">Umum</option>
-                                <option value="Teknis">Teknis</option>
+                                <option value="Umum" {{ old('kelompok_sk') == 'Umum' ? 'selected' : '' }}>Umum</option>
+                                <option value="Teknis" {{ old('kelompok_sk') == 'Teknis' ? 'selected' : '' }}>Teknis</option>
                             </select>
                             <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 top-7 text-[#4a9bc8]">
                                 <i class="fa-solid fa-chevron-down text-[12px]"></i>
@@ -73,17 +85,17 @@
 
                         <div class="mb-5">
                             <label class="block text-[#4a9bc8] text-[13px] mb-2 font-medium">Jenis SK</label>
-                            <input type="text" id="input-jenis" class="form-input-custom" placeholder="Masukkan Jenis SK..." required>
+                            <input type="text" name="nama_jenis_sk" value="{{ old('nama_jenis_sk') }}" class="form-input-custom" placeholder="Masukkan Jenis SK..." required>
                         </div>
 
                         <div class="mb-10">
                             <label class="block text-[#4a9bc8] text-[13px] mb-2 font-medium">Periode</label>
-                            <input type="text" id="input-periode" class="form-input-custom" placeholder="Contoh: 2026" required>
+                            <input type="text" name="periode" value="{{ old('periode') }}" class="form-input-custom" placeholder="Contoh: 2026">
                         </div>
 
                         <div class="flex justify-between gap-4">
-                            <a href="/data-jenis-sk" class="border border-[#4a9bc8] text-[#4a9bc8] px-8 py-2.5 rounded font-medium text-[13px] text-center flex-1 hover:bg-blue-50 transition-colors bg-white">KEMBALI</a>
-                            <button type="submit" class="border border-[#4a9bc8] text-[#4a9bc8] px-8 py-2.5 rounded font-medium text-[13px] flex-1 hover:bg-blue-50 transition-colors bg-white">Tambah</button>
+                            <a href="{{ url('/data-jenis-sk') }}" class="border border-[#4a9bc8] text-[#4a9bc8] px-8 py-2.5 rounded font-medium text-[13px] text-center flex-1 hover:bg-blue-50 transition-colors bg-white">KEMBALI</a>
+                            <button type="submit" class="border border-[#4a9bc8] text-white bg-[#4a9bc8] px-8 py-2.5 rounded font-medium text-[13px] flex-1 hover:bg-[#3982a9] transition-colors">TAMBAH</button>
                         </div>
                     </form>
                 </div>
@@ -92,25 +104,11 @@
     </main>
 
     <script>
-        document.getElementById('formTambahJenisSk').addEventListener('submit', function(e) {
-            e.preventDefault(); 
-            const kelompok = document.getElementById('input-kelompok').value.trim();
-            const jenis = document.getElementById('input-jenis').value.trim();
-            const periode = document.getElementById('input-periode').value.trim();
-
-            let databaseSK = JSON.parse(localStorage.getItem('db_jenis_sk_bps')) || [];
-            
-            // Logika Murni Tambah
-            databaseSK.push({ kelompok, jenis, periode });
-            
-            localStorage.setItem('db_jenis_sk_bps', JSON.stringify(databaseSK));
-            window.location.href = '/data-jenis-sk';
-        });
-
-        // Script Sidebar
+        // Script Sidebar untuk toggle hamburger menu
         const hamburgerBtn = document.getElementById('hamburgerToggle');
         const sidebar = document.getElementById('sidebar');
         const textsToHide = document.querySelectorAll('.sidebar-text');
+        
         hamburgerBtn.addEventListener('click', () => {
             const isMinimized = sidebar.classList.contains('w-[80px]');
             if (isMinimized) {
