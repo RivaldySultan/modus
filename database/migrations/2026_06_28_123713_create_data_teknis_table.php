@@ -9,17 +9,16 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-public function up()
-{
-    Schema::create('jenis_sks', function (Blueprint $table) {
-        $table->id();
-        $table->string('kelompok_sk');   // Untuk menyimpan "Umum" atau "Teknis"
-        $table->string('nama_jenis_sk'); // Untuk menyimpan nama Jenis SK
-        $table->string('periode')->nullable(); // Untuk menyimpan Periode (Tahunan, Bulanan, dll)
-        $table->timestamps();
-    });
-}
-
+    public function up()
+    {
+        Schema::create('data_teknis', function (Blueprint $table) {
+            $table->id();
+            $table->string('nama_teknis');
+            $table->string('kode_teknis')->nullable(); // Boleh kosong jika tidak ada kode
+            $table->text('keterangan')->nullable();    // Boleh kosong
+            $table->timestamps();
+        });
+    }
     /**
      * Reverse the migrations.
      */

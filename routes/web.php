@@ -9,6 +9,8 @@ use App\Http\Controllers\DataTeknisController;
 use App\Http\Controllers\DataKpaController;
 use App\Http\Controllers\DataPegawaiController;
 use App\Http\Controllers\JenisSkController;
+use App\Http\Controllers\UserDashboardController;
+use App\Http\Controllers\BuatSkController;
 
 // Rute Publik (Tidak perlu login)
 Route::get('/', [AuthController::class, 'index'])->name('login');
@@ -89,6 +91,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/arsip', function () { return view('admin.arsip'); });
 
     // --- HALAMAN USER (PEGAWAI) ---
-    Route::get('user/dashboard', function () { return view('user.dashboard'); });
-    Route::get('user/buat-sk', function () { return view('user.buat-sk'); });
-});
+    // (Tidak perlu dibungkus middleware auth lagi karena sudah berada di dalam grup auth utama)
+    Route::get('/user/dashboard', [UserDashboardController::class, 'index']);
+    Route::get('/user/buat-sk', [BuatSkController::class, 'create']); 
+    Route::post('/user/buat-sk', [BuatSkController::class, 'store']); 
+
+}); 

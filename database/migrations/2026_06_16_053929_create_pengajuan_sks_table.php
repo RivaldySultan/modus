@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('kelompok_sk'); // Kepanitiaan, Lapangan, dll
             $table->string('judul_sk');
             $table->string('nomor_sk')->unique();
-            $table->year('tahun_anggaran');
+            $table->string('tahun_anggaran', 4);
             $table->date('tanggal_ditetapkan');
             // Data DIPA & KPA (Bisa direlasikan, tapi disederhanakan jadi string dulu sesuai form)
             $table->string('nomor_dipa');

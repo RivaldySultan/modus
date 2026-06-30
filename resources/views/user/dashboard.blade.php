@@ -27,9 +27,9 @@
                 <div class="w-[20px] h-[3px] bg-white rounded-full"></div>
             </button>
             <div class="flex items-center gap-3">
-                <span class="text-[14px] font-medium text-gray-600 hidden md:block">Halo, Nama Pegawai</span>
+                <span class="text-[14px] font-medium text-gray-600 hidden md:block">Halo, {{ auth()->user()->nama ?? 'Pegawai' }}</span>
                 <div class="w-10 h-10 rounded-full border border-[#2491c9] p-[2px] cursor-pointer hover:shadow-md transition bg-white">
-                    <img src="https://i.pravatar.cc/150?img=32" alt="User Avatar" class="w-full h-full rounded-full object-cover">
+                    <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->nama ?? 'U') }}&background=2491c9&color=fff" alt="User Avatar" class="w-full h-full rounded-full object-cover">
                 </div>
             </div>
         </header>
@@ -43,15 +43,15 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="bg-white rounded border border-gray-200 shadow-sm flex flex-col items-center py-8">
                     <div class="card-title-container"><h2 class="text-[#2491c9] font-bold text-[15px] uppercase tracking-wide px-2">TOTAL PENGAJUAN SK</h2></div>
-                    <span class="text-[55px] font-[900] text-[#2491c9] leading-none mt-2">12</span>
+                    <span class="text-[55px] font-[900] text-[#2491c9] leading-none mt-2">{{ $totalPengajuan }}</span>
                 </div>
                 <div class="bg-white rounded border border-gray-200 shadow-sm flex flex-col items-center py-8">
                     <div class="card-title-container"><h2 class="text-[#f59e0b] font-bold text-[15px] uppercase tracking-wide px-2">SK SEDANG DIPROSES</h2></div>
-                    <span class="text-[55px] font-[900] text-[#f59e0b] leading-none mt-2">2</span>
+                    <span class="text-[55px] font-[900] text-[#f59e0b] leading-none mt-2">{{ $sedangDiproses }}</span>
                 </div>
                 <div class="bg-white rounded border border-gray-200 shadow-sm flex flex-col items-center py-8">
                     <div class="card-title-container"><h2 class="text-[#10b981] font-bold text-[15px] uppercase tracking-wide px-2">SK SELESAI / ARSIP</h2></div>
-                    <span class="text-[55px] font-[900] text-[#10b981] leading-none mt-2">10</span>
+                    <span class="text-[55px] font-[900] text-[#10b981] leading-none mt-2">{{ $selesai }}</span>
                 </div>
             </div>
 
@@ -65,21 +65,31 @@
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="bg-[#2491c9] text-white text-[13px] tracking-wide">
-                            <th class="py-3 px-6 font-medium">No</th>
+                            <th class="py-3 px-6 font-medium text-center w-16">No</th>
                             <th class="py-3 px-6 font-medium">Jenis SK</th>
                             <th class="py-3 px-6 font-medium">Tanggal Pengajuan</th>
-                            <th class="py-3 px-6 font-medium">Status</th>
+                            <th class="py-3 px-6 font-medium text-center">Status</th>
                             <th class="py-3 px-6 font-medium text-center">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="text-gray-600 text-[14px]">
-                        <tr class="border-b border-gray-100 hover:bg-gray-50 transition">
-                            <td class="py-3 px-6">1</td>
-                            <td class="py-3 px-6">SK Kepanitiaan</td>
-                            <td class="py-3 px-6">10 April 2026</td>
-                            <td class="py-3 px-6"><span class="bg-yellow-100 text-yellow-700 py-1 px-3 rounded-full text-[12px] font-semibold">Diproses</span></td>
-                            <td class="py-3 px-6 text-center"><button class="text-gray-400 hover:text-[#2491c9] transition"><i class="fa-solid fa-eye"></i></button></td>
-                        </tr>
+                        @forelse($riwayatPengajuan as $index => $riwayat)
+                            <tr class="border-b border-gray-100 hover:bg-gray-50 transition">
+                                <td class="py-3 px-6 text-center">{{ $index + 1 }}</td>
+                                <td class="py-3 px-6">{{ $riwayat->jenis_sk }}</td>
+                                <td class="py-3 px-6">{{ $riwayat->tanggal }}</td>
+                                <td class="py-3 px-6 text-center">
+                                    <span class="bg-yellow-100 text-yellow-700 py-1 px-3 rounded-full text-[12px] font-semibold">{{ $riwayat->status }}</span>
+                                </td>
+                                <td class="py-3 px-6 text-center">
+                                    <button class="text-gray-400 hover:text-[#2491c9] transition"><i class="fa-solid fa-eye"></i></button>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="py-8 text-center text-gray-400 italic text-[13px]">Belum ada riwayat pengajuan SK.</td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>

@@ -17,7 +17,7 @@
 </head>
 <body class="flex h-screen overflow-hidden text-gray-800">
 
-    @include('components.sidebar-user', ['active' => 'dashboard'])
+    @include('components.sidebar-user', ['active' => 'buat-sk'])
 
     <main class="flex-1 flex flex-col h-screen overflow-y-auto transition-all duration-300">
         <header class="h-[80px] flex items-center justify-between px-8 flex-shrink-0 bg-[#eef3f7] sticky top-0 z-10">
@@ -27,9 +27,9 @@
                 <div class="w-[20px] h-[3px] bg-white rounded-full"></div>
             </button>
             <div class="flex items-center gap-3">
-                <span class="text-[14px] font-medium text-gray-600 hidden md:block">Halo, Nama Pegawai</span>
+                <span class="text-[14px] font-medium text-gray-600 hidden md:block">Halo, {{ auth()->user()->nama ?? 'Pegawai' }}</span>
                 <div class="w-10 h-10 rounded-full border border-[#2491c9] p-[2px] cursor-pointer hover:shadow-md transition bg-white">
-                    <img src="https://i.pravatar.cc/150?img=32" alt="User Avatar" class="w-full h-full rounded-full object-cover">
+                    <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->nama ?? 'U') }}&background=2491c9&color=fff" alt="User Avatar" class="w-full h-full rounded-full object-cover">
                 </div>
             </div>
         </header>
@@ -42,7 +42,7 @@
             </div>
 
             <div id="step1-jenis" class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-[800px]">
-                <div onclick="pilihJenis('SK Umum')" class="hover-card bg-white border-2 border-gray-200 rounded-lg p-8 cursor-pointer flex flex-col items-center text-center">
+                <div onclick="pilihJenis('SK Umum')" class="hover-card bg-white border-2 border-gray-200 rounded-lg p-8 cursor-pointer flex flex-col items-center text-center transition-all hover:border-[#2491c9] hover:shadow-md">
                     <div class="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mb-5">
                         <i class="fa-solid fa-folder-open text-3xl text-[#2491c9]"></i>
                     </div>
@@ -50,7 +50,7 @@
                     <p class="text-[13px] text-gray-500">Pengajuan SK yang bersifat administratif umum, kepanitiaan internal, dan perjalanan dinas.</p>
                 </div>
 
-                <div onclick="pilihJenis('SK Teknis')" class="hover-card bg-white border-2 border-gray-200 rounded-lg p-8 cursor-pointer flex flex-col items-center text-center">
+                <div onclick="pilihJenis('SK Teknis')" class="hover-card bg-white border-2 border-gray-200 rounded-lg p-8 cursor-pointer flex flex-col items-center text-center transition-all hover:border-orange-500 hover:shadow-md">
                     <div class="w-20 h-20 bg-orange-50 rounded-full flex items-center justify-center mb-5">
                         <i class="fa-solid fa-cogs text-3xl text-orange-500"></i>
                     </div>
@@ -83,31 +83,41 @@
                             </div>
                             <h2 id="labelKelompokTerpilih" class="text-[20px] font-bold text-[#2491c9] mt-1">SK Kepanitiaan</h2>
                         </div>
-                        <button onclick="kembaliKeLangkah2()" class="text-[13px] text-gray-500 hover:text-red-500 font-medium transition flex items-center gap-1.5">
+                        <button type="button" onclick="kembaliKeLangkah2()" class="text-[13px] text-gray-500 hover:text-red-500 font-medium transition flex items-center gap-1.5">
                             <i class="fa-solid fa-arrow-left"></i> Ganti Kelompok
                         </button>
                     </div>
 
-                    <form id="formPengajuan" class="space-y-8" onsubmit="ajukanSK(event)">
+                    <form id="formPengajuan" action="{{ url('/user/buat-sk') }}" method="POST" class="space-y-8">
+                        @csrf
+                        
+                        <input type="hidden" name="jenis_sk" id="hidden_jenis_sk">
+                        <input type="hidden" name="kelompok_sk" id="hidden_kelompok_sk">
+
+                        @if ($errors->any())
+                            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative text-[12px]">
+                                <ul>@foreach ($errors->all() as $error) <li>- {{ $error }}</li> @endforeach</ul>
+                            </div>
+                        @endif
                         
                         <div>
                             <h3 class="text-[14px] font-bold text-gray-800 border-l-4 border-[#2491c9] pl-3 mb-4">Informasi Umum SK</h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div class="col-span-2">
-                                    <label class="block text-gray-700 text-[13px] font-medium mb-1.5">Judul SK / Nama Kegiatan <code class="text-blue-400 ml-1">&lt;&lt;judul&gt;&gt;</code></label>
-                                    <input type="text" id="sk_judul" placeholder="Contoh: PENGELOLA ANGGARAN" class="w-full border border-gray-300 rounded px-3 py-2 text-[14px] focus:outline-none focus:border-[#2491c9]" required>
+                                    <label class="block text-gray-700 text-[13px] font-medium mb-1.5">Judul SK / Nama Kegiatan</label>
+                                    <input type="text" name="judul_sk" value="{{ old('judul_sk') }}" placeholder="Contoh: PENGELOLA ANGGARAN" class="w-full border border-gray-300 rounded px-3 py-2 text-[14px] focus:outline-none focus:border-[#2491c9]" required>
                                 </div>
                                 <div>
-                                    <label class="block text-gray-700 text-[13px] font-medium mb-1.5">Nomor SK <code class="text-blue-400 ml-1">&lt;&lt;no&gt;&gt;</code></label>
-                                    <input type="text" id="sk_no" placeholder="Contoh: 001/KPA/0821" class="w-full border border-gray-300 rounded px-3 py-2 text-[14px] focus:outline-none focus:border-[#2491c9]" required>
+                                    <label class="block text-gray-700 text-[13px] font-medium mb-1.5">Nomor SK</label>
+                                    <input type="text" name="nomor_sk" value="{{ old('nomor_sk') }}" placeholder="Contoh: 001/KPA/0821" class="w-full border border-gray-300 rounded px-3 py-2 text-[14px] focus:outline-none focus:border-[#2491c9]" required>
                                 </div>
                                 <div>
-                                    <label class="block text-gray-700 text-[13px] font-medium mb-1.5">Tahun Anggaran <code class="text-blue-400 ml-1">&lt;&lt;thn&gt;&gt;</code></label>
-                                    <input type="text" id="sk_thn" placeholder="Contoh: 2026" class="w-full border border-gray-300 rounded px-3 py-2 text-[14px] focus:outline-none focus:border-[#2491c9]" required>
+                                    <label class="block text-gray-700 text-[13px] font-medium mb-1.5">Tahun Anggaran</label>
+                                    <input type="number" name="tahun_anggaran" value="{{ old('tahun_anggaran') }}" placeholder="Contoh: 2026" class="w-full border border-gray-300 rounded px-3 py-2 text-[14px] focus:outline-none focus:border-[#2491c9]" required>
                                 </div>
                                 <div class="col-span-2 md:col-span-1">
-                                    <label class="block text-gray-700 text-[13px] font-medium mb-1.5">Tanggal Ditetapkan SK <code class="text-blue-400 ml-1">&lt;&lt;tgl_sk&gt;&gt;</code></label>
-                                    <input type="date" id="sk_tgl" class="w-full border border-gray-300 rounded px-3 py-2 text-[14px] focus:outline-none focus:border-[#2491c9]" required>
+                                    <label class="block text-gray-700 text-[13px] font-medium mb-1.5">Tanggal Ditetapkan SK</label>
+                                    <input type="date" name="tanggal_ditetapkan" value="{{ old('tanggal_ditetapkan') }}" class="w-full border border-gray-300 rounded px-3 py-2 text-[14px] focus:outline-none focus:border-[#2491c9]" required>
                                 </div>
                             </div>
                         </div>
@@ -116,12 +126,12 @@
                             <h3 class="text-[14px] font-bold text-gray-800 border-l-4 border-green-500 pl-3 mb-4">Dasar DIPA</h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label class="block text-gray-700 text-[13px] font-medium mb-1.5">Nomor DIPA <code class="text-blue-400 ml-1">&lt;&lt;no_dipa&gt;&gt;</code></label>
-                                    <input type="text" id="dipa_no" placeholder="Masukkan Nomor DIPA..." class="w-full border border-gray-300 rounded px-3 py-2 text-[14px] focus:outline-none focus:border-green-500" required>
+                                    <label class="block text-gray-700 text-[13px] font-medium mb-1.5">Nomor DIPA</label>
+                                    <input type="text" name="nomor_dipa" value="{{ old('nomor_dipa') }}" placeholder="Masukkan Nomor DIPA..." class="w-full border border-gray-300 rounded px-3 py-2 text-[14px] focus:outline-none focus:border-green-500" required>
                                 </div>
                                 <div>
-                                    <label class="block text-gray-700 text-[13px] font-medium mb-1.5">Tanggal DIPA <code class="text-blue-400 ml-1">&lt;&lt;tgl_dipa&gt;&gt;</code></label>
-                                    <input type="date" id="dipa_tgl" class="w-full border border-gray-300 rounded px-3 py-2 text-[14px] focus:outline-none focus:border-green-500" required>
+                                    <label class="block text-gray-700 text-[13px] font-medium mb-1.5">Tanggal DIPA</label>
+                                    <input type="date" name="tanggal_dipa" value="{{ old('tanggal_dipa') }}" class="w-full border border-gray-300 rounded px-3 py-2 text-[14px] focus:outline-none focus:border-green-500" required>
                                 </div>
                             </div>
                         </div>
@@ -130,12 +140,12 @@
                             <h3 class="text-[14px] font-bold text-gray-800 border-l-4 border-purple-500 pl-3 mb-4">Penandatangan (KPA)</h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label class="block text-gray-700 text-[13px] font-medium mb-1.5">Nama KPA <code class="text-blue-400 ml-1">&lt;&lt;kpa&gt;&gt;</code></label>
-                                    <input type="text" id="kpa_nama" placeholder="Masukkan Nama KPA..." class="w-full border border-gray-300 rounded px-3 py-2 text-[14px] focus:outline-none focus:border-purple-500" required>
+                                    <label class="block text-gray-700 text-[13px] font-medium mb-1.5">Nama KPA</label>
+                                    <input type="text" name="kpa_nama" value="{{ old('kpa_nama') }}" placeholder="Masukkan Nama KPA..." class="w-full border border-gray-300 rounded px-3 py-2 text-[14px] focus:outline-none focus:border-purple-500" required>
                                 </div>
                                 <div>
-                                    <label class="block text-gray-700 text-[13px] font-medium mb-1.5">NIP KPA <code class="text-blue-400 ml-1">&lt;&lt;nip_kpa&gt;&gt;</code></label>
-                                    <input type="text" id="kpa_nip" placeholder="Contoh: 197001012000031001" class="w-full border border-gray-300 rounded px-3 py-2 text-[14px] focus:outline-none focus:border-purple-500" required>
+                                    <label class="block text-gray-700 text-[13px] font-medium mb-1.5">NIP KPA</label>
+                                    <input type="text" name="kpa_nip" value="{{ old('kpa_nip') }}" placeholder="Contoh: 197001012000031001" class="w-full border border-gray-300 rounded px-3 py-2 text-[14px] focus:outline-none focus:border-purple-500" required>
                                 </div>
                             </div>
                         </div>
@@ -152,19 +162,19 @@
                                     </h4>
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div>
-                                            <label class="block text-gray-700 text-[12px] font-medium mb-1.5">Nama Pegawai <code class="text-blue-400 ml-1">&lt;&lt;nama01&gt;&gt;</code></label>
+                                            <label class="block text-gray-700 text-[12px] font-medium mb-1.5">Nama Pegawai</label>
                                             <input type="text" name="peserta_nama[]" placeholder="Nama Lengkap..." class="w-full border border-gray-300 rounded px-3 py-2 text-[13px] focus:outline-none focus:border-orange-500" required>
                                         </div>
                                         <div>
-                                            <label class="block text-gray-700 text-[12px] font-medium mb-1.5">NIP Pegawai <code class="text-blue-400 ml-1">&lt;&lt;nip_01&gt;&gt;</code></label>
+                                            <label class="block text-gray-700 text-[12px] font-medium mb-1.5">NIP Pegawai</label>
                                             <input type="text" name="peserta_nip[]" placeholder="NIP Pegawai..." class="w-full border border-gray-300 rounded px-3 py-2 text-[13px] focus:outline-none focus:border-orange-500" required>
                                         </div>
                                         <div>
-                                            <label class="block text-gray-700 text-[12px] font-medium mb-1.5">Jabatan <code class="text-blue-400 ml-1">&lt;&lt;jab&gt;&gt;</code></label>
+                                            <label class="block text-gray-700 text-[12px] font-medium mb-1.5">Jabatan</label>
                                             <input type="text" name="peserta_jab[]" placeholder="Jabatan dalam SK..." class="w-full border border-gray-300 rounded px-3 py-2 text-[13px] focus:outline-none focus:border-orange-500" required>
                                         </div>
                                         <div>
-                                            <label class="block text-gray-700 text-[12px] font-medium mb-1.5">Honor Per Bulan <code class="text-blue-400 ml-1">&lt;&lt;hnr&gt;&gt;</code></label>
+                                            <label class="block text-gray-700 text-[12px] font-medium mb-1.5">Honor Per Bulan</label>
                                             <input type="text" name="peserta_hnr[]" placeholder="Contoh: 1.150.000" class="w-full border border-gray-300 rounded px-3 py-2 text-[13px] focus:outline-none focus:border-orange-500" required>
                                         </div>
                                     </div>
@@ -174,18 +184,16 @@
                             <button type="button" onclick="tambahPeserta()" class="mt-4 bg-white text-orange-600 border border-orange-200 hover:bg-orange-100 font-semibold px-4 py-2 rounded text-[12px] transition w-full shadow-sm flex justify-center items-center gap-2">
                                 <i class="fa-solid fa-plus"></i> Tambah Data Peserta Lainnya
                             </button>
-
                         </div>
 
                         <div class="flex items-center justify-end gap-3 mt-8 pt-6 border-t border-gray-200">
-                            <button type="button" onclick="window.location.href='{{ url('/user/dashboard') }}'" class="px-5 py-2.5 text-[14px] font-semibold text-gray-600 hover:text-gray-900 transition">
+                            <button type="button" onclick="window.location.href='{{ url('/user/dashboard') }}'" class="px-5 py-2.5 text-[14px] font-semibold text-gray-600 hover:text-gray-900 transition border border-gray-300 rounded">
                                 Batal
                             </button>
                             <button type="submit" class="bg-[#2491c9] text-white rounded px-6 py-2.5 text-[14px] font-bold hover:bg-[#1d7aa9] shadow transition tracking-wide">
                                 Ajukan Pembuatan SK
                             </button>
                         </div>
-
                     </form>
                 </div>
             </div>
@@ -194,8 +202,6 @@
     </main>
 
     <script>
-
-        // LOGIKA 3-STEP FORM
         const step1 = document.getElementById('step1-jenis');
         const step2 = document.getElementById('step2-kelompok');
         const step3 = document.getElementById('step3-form');
@@ -219,6 +225,7 @@
 
         function pilihJenis(jenis) {
             stateJenis = jenis;
+            document.getElementById('hidden_jenis_sk').value = jenis; // Set input hidden backend
             step1.classList.add('hidden');
             step2.classList.remove('hidden');
             
@@ -239,7 +246,7 @@
 
             dataKelompokSK[jenis].forEach(kel => {
                 wadahKelompok.innerHTML += `
-                    <div onclick="pilihKelompok('${kel.nama}')" class="hover-card bg-white border border-gray-200 rounded flex p-4 cursor-pointer gap-4 items-center shadow-sm">
+                    <div onclick="pilihKelompok('${kel.nama}')" class="hover-card bg-white border border-gray-200 rounded flex p-4 cursor-pointer gap-4 items-center shadow-sm hover:border-[#2491c9] transition-all">
                         <div class="w-12 h-12 rounded bg-gray-50 flex items-center justify-center flex-shrink-0 border border-gray-100">
                             <i class="fa-solid ${kel.icon} text-lg text-gray-600"></i>
                         </div>
@@ -260,6 +267,7 @@
 
         function pilihKelompok(kelompok) {
             stateKelompok = kelompok;
+            document.getElementById('hidden_kelompok_sk').value = kelompok; // Set input hidden backend
             step2.classList.add('hidden');
             step3.classList.remove('hidden');
 
@@ -274,20 +282,13 @@
             subtitle.innerText = "Langkah 2: Pilih Kelompok SK yang Spesifik";
         }
 
-        // ==========================================
-        // LOGIKA DINAMIS TAMBAH/HAPUS PESERTA
-        // ==========================================
         function tambahPeserta() {
             const wadah = document.getElementById('wadah-peserta');
-            const totalPeserta = wadah.children.length + 1; // Hitung jumlah elemen anak
+            const totalPeserta = wadah.children.length + 1;
 
-            // Buat Elemen Div Baru
             const elemenBaru = document.createElement('div');
             elemenBaru.className = 'peserta-item bg-white p-4 rounded border border-gray-200 relative shadow-sm mt-4';
             
-            // Format angka untuk label <<nama02>>, <<nip_02>> dst.
-            const fmtNum = totalPeserta < 10 ? '0' + totalPeserta : totalPeserta;
-
             elemenBaru.innerHTML = `
                 <h4 class="text-[12px] font-bold text-orange-600 mb-3 border-b border-gray-100 pb-2 flex justify-between items-center">
                     <span class="nomor-peserta">Peserta #${totalPeserta}</span>
@@ -297,66 +298,37 @@
                 </h4>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-gray-700 text-[12px] font-medium mb-1.5">Nama Pegawai <code class="text-blue-400 ml-1">&lt;&lt;nama${fmtNum}&gt;&gt;</code></label>
+                        <label class="block text-gray-700 text-[12px] font-medium mb-1.5">Nama Pegawai</label>
                         <input type="text" name="peserta_nama[]" placeholder="Nama Lengkap..." class="w-full border border-gray-300 rounded px-3 py-2 text-[13px] focus:outline-none focus:border-orange-500" required>
                     </div>
                     <div>
-                        <label class="block text-gray-700 text-[12px] font-medium mb-1.5">NIP Pegawai <code class="text-blue-400 ml-1">&lt;&lt;nip_${fmtNum}&gt;&gt;</code></label>
+                        <label class="block text-gray-700 text-[12px] font-medium mb-1.5">NIP Pegawai</label>
                         <input type="text" name="peserta_nip[]" placeholder="NIP Pegawai..." class="w-full border border-gray-300 rounded px-3 py-2 text-[13px] focus:outline-none focus:border-orange-500" required>
                     </div>
                     <div>
-                        <label class="block text-gray-700 text-[12px] font-medium mb-1.5">Jabatan <code class="text-blue-400 ml-1">&lt;&lt;jab&gt;&gt;</code></label>
+                        <label class="block text-gray-700 text-[12px] font-medium mb-1.5">Jabatan</label>
                         <input type="text" name="peserta_jab[]" placeholder="Jabatan dalam SK..." class="w-full border border-gray-300 rounded px-3 py-2 text-[13px] focus:outline-none focus:border-orange-500" required>
                     </div>
                     <div>
-                        <label class="block text-gray-700 text-[12px] font-medium mb-1.5">Honor Per Bulan <code class="text-blue-400 ml-1">&lt;&lt;hnr&gt;&gt;</code></label>
+                        <label class="block text-gray-700 text-[12px] font-medium mb-1.5">Honor Per Bulan</label>
                         <input type="text" name="peserta_hnr[]" placeholder="Contoh: 1.150.000" class="w-full border border-gray-300 rounded px-3 py-2 text-[13px] focus:outline-none focus:border-orange-500" required>
                     </div>
                 </div>
             `;
-            
-            // Masukkan ke dalam wadah
             wadah.appendChild(elemenBaru);
         }
 
         function hapusPeserta(tombol) {
-            // Hapus elemen bungkus terdekat (.peserta-item)
             const elemenPeserta = tombol.closest('.peserta-item');
             elemenPeserta.remove();
-            
-            // Perbarui penomoran urut agar tetap rapi setelah ada yang dihapus
             perbaruiNomorPeserta();
         }
 
         function perbaruiNomorPeserta() {
             const semuaPeserta = document.querySelectorAll('.peserta-item');
             semuaPeserta.forEach((elemen, index) => {
-                const urutan = index + 1;
-                const fmtNum = urutan < 10 ? '0' + urutan : urutan;
-                
-                // Update teks judul
-                elemen.querySelector('.nomor-peserta').innerText = `Peserta #${urutan}`;
-                
-                // Update teks code label (opsional tapi bagus untuk visual template)
-                const labelsCode = elemen.querySelectorAll('code');
-                if(labelsCode.length >= 2) {
-                    labelsCode[0].innerText = `<<nama${fmtNum}>>`;
-                    labelsCode[1].innerText = `<<nip_${fmtNum}>>`;
-                }
+                elemen.querySelector('.nomor-peserta').innerText = `Peserta #${index + 1}`;
             });
-        }
-
-        function ajukanSK(event) {
-            event.preventDefault(); // Mencegah reload halaman
-            
-            const judul = document.getElementById('sk_judul').value;
-            const no = document.getElementById('sk_no').value;
-            const jumlahPeserta = document.querySelectorAll('.peserta-item').length;
-            
-            alert(`Pengajuan berhasil!\n\nDokumen [${judul}] dengan nomor [${no}] beserta [${jumlahPeserta} Peserta] akan segera diproses oleh sistem.`);
-            
-            // Redirect kembali ke dashboard user
-            window.location.href = "{{ url('/user/dashboard') }}";
         }
     </script>
 </body>
