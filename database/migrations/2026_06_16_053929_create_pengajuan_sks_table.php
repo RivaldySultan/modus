@@ -13,20 +13,23 @@ return new class extends Migration
     {
         Schema::create('pengajuan_sks', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // Relasi ke pembuat SK
-            $table->string('jenis_sk'); // SK Umum / SK Teknis
-            $table->string('kelompok_sk'); // Kepanitiaan, Lapangan, dll
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->string('jenis_sk');
+            $table->string('kelompok_sk');
             $table->string('judul_sk');
             $table->string('nomor_sk')->unique();
             $table->string('tahun_anggaran', 4);
             $table->date('tanggal_ditetapkan');
-            // Data DIPA & KPA (Bisa direlasikan, tapi disederhanakan jadi string dulu sesuai form)
             $table->string('nomor_dipa');
             $table->date('tanggal_dipa');
             $table->string('kpa_nama');
             $table->string('kpa_nip');
             
-            $table->enum('status_pengajuan', ['Diproses', 'Selesai'])->default('Diproses');
+            // PERUBAHAN DI SINI:
+            $table->string('status_pengajuan')->default('Diproses'); // Diproses, Selesai, Ditolak, Revisi
+            $table->text('catatan')->nullable(); // Tempat Admin memberi tanggapan
+            $table->string('file_sk')->nullable(); // Tempat menyimpan file docx
+            
             $table->timestamps();
         });
     }

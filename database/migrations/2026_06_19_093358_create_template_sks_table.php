@@ -6,23 +6,18 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('template_sks', function (Blueprint $table) {
-        $table->id();
-        $table->string('nama_template');
-        $table->string('file_template'); // Untuk menyimpan lokasi file di server
-        $table->text('keterangan')->nullable();
-        $table->timestamps();
-    });
-}
+            $table->id();
+            $table->string('nama_template');
+            $table->unsignedBigInteger('jenis_sk_id')->nullable(); // Kolom relasi baru
+            $table->string('file_template'); 
+            $table->text('keterangan')->nullable();
+            $table->timestamps();
+        });
+    }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('template_sks');

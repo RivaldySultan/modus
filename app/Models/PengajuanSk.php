@@ -22,6 +22,7 @@ class PengajuanSk extends Model
         'kpa_nama',
         'kpa_nip',
         'status_pengajuan',
+        'file_sk'
     ];
 
     // Relasi: Satu SK punya banyak Peserta/Lampiran
@@ -30,7 +31,7 @@ class PengajuanSk extends Model
         return $this->hasMany(PesertaSk::class, 'pengajuan_sk_id');
     }
 
-    // Relasi: SK ini dibuat oleh siapa
+    // Relasi ke tabel User (Pembuat SK)
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');

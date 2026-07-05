@@ -13,13 +13,17 @@
         .card-title-container::after { content: ""; position: absolute; bottom: 0; left: 0; width: 100%; height: 1.5px; background-color: #2491c9; }
         .sidebar-scroll::-webkit-scrollbar { width: 4px; }
         .sidebar-scroll::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        
+        /* Pengaturan Live Preview Word */
+        .docx-wrapper { background-color: transparent !important; padding: 0 !important; }
+        .docx { box-shadow: none !important; border: 1px solid #e2e8f0 !important; }
     </style>
 </head>
 <body class="flex h-screen overflow-hidden text-gray-800">
 
     @include('components.sidebar-user', ['active' => 'dashboard'])
 
-    <main class="flex-1 flex flex-col h-screen overflow-y-auto transition-all duration-300">
+    <main class="flex-1 flex flex-col h-screen overflow-y-auto transition-all duration-300 relative">
         <header class="h-[80px] flex items-center justify-between px-8 flex-shrink-0 bg-[#eef3f7] sticky top-0 z-10">
             <button id="hamburgerToggle" class="w-[38px] h-[35px] bg-[#2491c9] rounded flex flex-col items-center justify-center gap-[4px] hover:bg-[#1d7aa9] transition cursor-pointer shadow-sm">
                 <div class="w-[20px] h-[3px] bg-white rounded-full"></div>
@@ -27,9 +31,9 @@
                 <div class="w-[20px] h-[3px] bg-white rounded-full"></div>
             </button>
             <div class="flex items-center gap-3">
-                <span class="text-[14px] font-medium text-gray-600 hidden md:block">Halo, {{ auth()->user()->nama ?? 'Pegawai' }}</span>
+                <span class="text-[14px] font-medium text-gray-600 hidden md:block">Halo, {{ auth()->user()?->nama ?? 'Pegawai' }}</span>
                 <div class="w-10 h-10 rounded-full border border-[#2491c9] p-[2px] cursor-pointer hover:shadow-md transition bg-white">
-                    <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->nama ?? 'U') }}&background=2491c9&color=fff" alt="User Avatar" class="w-full h-full rounded-full object-cover">
+                    <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()?->nama ?? 'U') }}&background=2491c9&color=fff" alt="User Avatar" class="w-full h-full rounded-full object-cover">
                 </div>
             </div>
         </header>
@@ -39,6 +43,12 @@
                 <h1 class="text-[26px] font-bold text-black">Selamat Datang!</h1>
                 <p class="text-gray-500 text-[14px] mt-1">Pantau status Surat Keputusan (SK) yang telah Anda ajukan di sini.</p>
             </div>
+
+            @if(session('success'))
+                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4 text-[13px]">
+                    <span class="block sm:inline">{{ session('success') }}</span>
+                </div>
+            @endif
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="bg-white rounded border border-gray-200 shadow-sm flex flex-col items-center py-8">
@@ -62,38 +72,137 @@
                         <i class="fa-solid fa-plus mr-1"></i> Buat SK Baru
                     </a>
                 </div>
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="bg-[#2491c9] text-white text-[13px] tracking-wide">
-                            <th class="py-3 px-6 font-medium text-center w-16">No</th>
-                            <th class="py-3 px-6 font-medium">Jenis SK</th>
-                            <th class="py-3 px-6 font-medium">Tanggal Pengajuan</th>
-                            <th class="py-3 px-6 font-medium text-center">Status</th>
-                            <th class="py-3 px-6 font-medium text-center">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody class="text-gray-600 text-[14px]">
-                        @forelse($riwayatPengajuan as $index => $riwayat)
-                            <tr class="border-b border-gray-100 hover:bg-gray-50 transition">
-                                <td class="py-3 px-6 text-center">{{ $index + 1 }}</td>
-                                <td class="py-3 px-6">{{ $riwayat->jenis_sk }}</td>
-                                <td class="py-3 px-6">{{ $riwayat->tanggal }}</td>
-                                <td class="py-3 px-6 text-center">
-                                    <span class="bg-yellow-100 text-yellow-700 py-1 px-3 rounded-full text-[12px] font-semibold">{{ $riwayat->status }}</span>
-                                </td>
-                                <td class="py-3 px-6 text-center">
-                                    <button class="text-gray-400 hover:text-[#2491c9] transition"><i class="fa-solid fa-eye"></i></button>
-                                </td>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse min-w-[800px]">
+                        <thead>
+                            <tr class="bg-[#2491c9] text-white text-[13px] tracking-wide">
+                                <th class="py-3 px-6 font-medium text-center w-16">No</th>
+                                <th class="py-3 px-6 font-medium">Jenis SK / Judul</th>
+                                <th class="py-3 px-6 font-medium">Tanggal Pengajuan</th>
+                                <th class="py-3 px-6 font-medium text-center">Status & Catatan</th>
+                                <th class="py-3 px-6 font-medium text-center">Aksi / Dokumen</th>
                             </tr>
-                        @empty
-                            <tr>
-                                <td colspan="5" class="py-8 text-center text-gray-400 italic text-[13px]">Belum ada riwayat pengajuan SK.</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody class="text-gray-600 text-[14px]">
+                            @forelse($riwayatPengajuan as $index => $riwayat)
+                                <tr class="border-b border-gray-100 hover:bg-gray-50 transition">
+                                    <td class="py-4 px-6 text-center text-[#2491c9] font-semibold">{{ $index + 1 }}</td>
+                                    
+                                    <td class="py-4 px-6">
+                                        <div class="font-bold text-[#2491c9]">{{ $riwayat->kelompok_sk }}</div>
+                                        <div class="text-[12px] text-gray-500 font-semibold">{{ $riwayat->nomor_sk }}</div>
+                                        <div class="text-[12px] text-gray-500 italic mt-0.5">{{ $riwayat->judul_sk }}</div>
+                                    </td>
+                                    
+                                    <td class="py-4 px-6">{{ \Carbon\Carbon::parse($riwayat->created_at)->translatedFormat('d F Y') }}</td>
+                                    
+                                    <td class="py-4 px-6 text-center">
+                                        @if($riwayat->status_pengajuan == 'Selesai')
+                                            <span class="bg-green-100 text-green-700 py-1 px-3 rounded-full text-[11px] font-bold">SELESAI</span>
+                                        @elseif($riwayat->status_pengajuan == 'Revisi')
+                                            <span class="bg-orange-100 text-orange-700 py-1 px-3 rounded-full text-[11px] font-bold">BUTUH REVISI</span>
+                                        @elseif($riwayat->status_pengajuan == 'Ditolak')
+                                            <span class="bg-red-100 text-red-700 py-1 px-3 rounded-full text-[11px] font-bold">DITOLAK</span>
+                                        @else
+                                            <span class="bg-blue-100 text-blue-700 py-1 px-3 rounded-full text-[11px] font-bold">DIPROSES</span>
+                                        @endif
+                                        
+                                        @if($riwayat->catatan)
+                                            <div class="mt-2 text-[11px] text-left bg-white p-2 border border-gray-200 rounded text-gray-600 shadow-sm relative group cursor-help">
+                                                <i class="fa-solid fa-comment-dots text-orange-400 mr-1"></i> 
+                                                <span class="line-clamp-2">"{{ $riwayat->catatan }}"</span>
+                                                <div class="hidden group-hover:block absolute z-10 bottom-full left-0 mb-2 w-[250px] p-2 bg-gray-800 text-white text-[11px] rounded shadow-lg">
+                                                    {{ $riwayat->catatan }}
+                                                </div>
+                                            </div>
+                                        @endif
+                                    </td>
+                                    
+                                    <td class="py-4 px-6">
+                                        <div class="flex justify-center gap-2 items-center">
+                                            @if($riwayat->file_sk)
+                                                <button type="button" onclick="openPreview('/storage/{{ $riwayat->file_sk }}', '{{ $riwayat->nomor_sk }}')" class="bg-white border border-[#2491c9] text-[#2491c9] hover:bg-blue-50 px-3 py-1.5 rounded text-[12px] font-semibold transition flex items-center gap-1.5" title="Lihat Dokumen">
+                                                    <i class="fa-solid fa-eye"></i> Lihat
+                                                </button>
+
+                                                <a href="{{ asset('storage/' . $riwayat->file_sk) }}" target="_blank" class="bg-[#2491c9] text-white hover:bg-[#1d7aa9] px-3 py-1.5 rounded text-[12px] font-semibold transition flex items-center gap-1.5" title="Download SK">
+                                                    <i class="fa-solid fa-download"></i> Unduh
+                                                </a>
+                                            @elseif($riwayat->status_pengajuan == 'Ditolak' || $riwayat->status_pengajuan == 'Revisi')
+                                                <span class="text-gray-400 text-[12px] italic"><i class="fa-solid fa-ban"></i> Tidak ada file</span>
+                                            @else
+                                                <button class="bg-gray-100 text-red-400 px-3 py-1.5 rounded text-[12px] font-semibold cursor-not-allowed flex items-center gap-1.5" title="Gagal generate file. Silakan ajukan ulang.">
+                                                    <i class="fa-solid fa-triangle-exclamation"></i> Gagal Dokumen
+                                                </button>
+                                            @endif
+                                        </div>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="5" class="py-10 text-center text-gray-400 italic text-[13px]">Belum ada riwayat pengajuan SK.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </main>
+
+    <div id="previewModal" class="hidden fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4">
+        <div class="bg-white rounded shadow-xl w-full max-w-4xl h-[85vh] flex flex-col overflow-hidden">
+            <div class="px-6 py-4 bg-[#2a93c9] text-white flex justify-between items-center flex-shrink-0">
+                <h3 id="modalTitle" class="font-bold text-[14px] uppercase tracking-wide">Pratinjau Dokumen</h3>
+                <button onclick="closePreview()" class="text-white hover:text-gray-200 text-2xl font-semibold">&times;</button>
+            </div>
+            <div class="flex-1 overflow-y-auto bg-gray-100 p-6 flex justify-center items-start relative">
+                <div id="loadingTemplate" class="hidden absolute inset-0 bg-white/80 z-10 flex flex-col items-center justify-center gap-2">
+                    <i class="fa-solid fa-spinner fa-spin text-3xl text-[#2a93c9]"></i>
+                    <p class="text-[13px] text-gray-500 font-medium">Membaca isi dokumen...</p>
+                </div>
+                <div id="documentContainer" class="w-full max-w-[800px]"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/jszip/dist/jszip.min.js"></script>
+    <script src="https://unpkg.com/docx-preview/dist/docx-preview.js"></script>
+
+    <script>
+        function openPreview(fileUrl, docTitle) {
+            const previewModal = document.getElementById('previewModal');
+            const container = document.getElementById('documentContainer');
+            const loading = document.getElementById('loadingTemplate');
+            
+            document.getElementById('modalTitle').textContent = "Preview SK: " + docTitle;
+            
+            previewModal.classList.remove('hidden');
+            loading.classList.remove('hidden');
+            container.innerHTML = ""; 
+
+            fetch(fileUrl)
+                .then(response => {
+                    if (!response.ok) throw new Error('Gagal mengambil file.');
+                    return response.blob();
+                })
+                .then(blob => {
+                    loading.classList.add('hidden');
+                    docx.renderAsync(blob, container)
+                        .catch(err => {
+                            container.innerHTML = `<div class="p-6 text-center text-red-500 font-medium bg-white border">Format file tidak didukung oleh browser.</div>`;
+                        });
+                })
+                .catch(error => {
+                    loading.classList.add('hidden');
+                    container.innerHTML = `<div class="p-6 text-center text-red-500 font-medium bg-white border">Gagal memuat dokumen. Pastikan Anda terkoneksi ke server.</div>`;
+                });
+        }
+
+        function closePreview() {
+            document.getElementById('previewModal').classList.add('hidden');
+            document.getElementById('documentContainer').innerHTML = "";
+        }
+    </script>
 </body>
 </html>

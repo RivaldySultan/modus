@@ -9,13 +9,18 @@ class TemplateSk extends Model
 {
     use HasFactory;
 
-    // Menentukan nama tabel (opsional tapi sangat disarankan agar tidak salah baca)
     protected $table = 'template_sks';
 
-    // Mengizinkan kolom-kolom ini diisi data dari form
     protected $fillable = [
         'nama_template',
+        'jenis_sk_id', 
         'file_template',
         'keterangan',
     ];
+
+    // Fungsi Relasi ke Jenis SK
+    public function jenisSk()
+    {
+        return $this->belongsTo(JenisSk::class, 'jenis_sk_id');
+    }
 }

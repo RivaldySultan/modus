@@ -11,6 +11,7 @@ use App\Http\Controllers\DataPegawaiController;
 use App\Http\Controllers\JenisSkController;
 use App\Http\Controllers\UserDashboardController;
 use App\Http\Controllers\BuatSkController;
+use App\Http\Controllers\ArsipController;
 
 // Rute Publik (Tidak perlu login)
 Route::get('/', [AuthController::class, 'index'])->name('login');
@@ -88,7 +89,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/hapus-template/{id}', [TemplateSkController::class, 'destroy']);
 
     // --- ARSIP / MONITORING ---
-    Route::get('/arsip', function () { return view('admin.arsip'); });
+    Route::get('/arsip', [ArsipController::class, 'index']);
+    // --- AKSI MONITORING SK ---
+    Route::post('/arsip/update-status/{id}', [ArsipController::class, 'updateStatus']);
 
     // --- HALAMAN USER (PEGAWAI) ---
     // (Tidak perlu dibungkus middleware auth lagi karena sudah berada di dalam grup auth utama)

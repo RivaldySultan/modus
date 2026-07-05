@@ -23,10 +23,13 @@
     </div>
     
     <div class="border-t border-gray-100 bg-white sticky bottom-0">
-        <a href="/" class="nav-link flex items-center justify-start gap-4 pl-5 pr-4 py-5 text-gray-800 font-medium transition-all duration-300 border-l-[4px] border-transparent hover:border-red-500 hover:bg-red-50 hover:text-red-500">
-            <i class="fa-solid fa-right-from-bracket nav-icon text-xl"></i>
-            <span class="sidebar-text text-[14px] whitespace-nowrap">Logout</span>
-        </a>
+        <form action="{{ url('/logout') }}" method="POST">
+            @csrf
+            <button type="submit" class="w-full text-left nav-link flex items-center justify-start gap-4 pl-5 pr-4 py-5 text-gray-800 font-medium transition-all duration-300 border-l-[4px] border-transparent hover:border-red-500 hover:bg-red-50 hover:text-red-500 cursor-pointer">
+                <i class="fa-solid fa-right-from-bracket nav-icon text-xl"></i>
+                <span class="sidebar-text text-[14px] whitespace-nowrap">Logout</span>
+            </button>
+        </form>
     </div>
 </aside>
 

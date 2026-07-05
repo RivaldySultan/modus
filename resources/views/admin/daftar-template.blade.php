@@ -33,11 +33,11 @@
             </button>
             <div class="flex items-center gap-3">
                 <div class="text-right hidden md:block">
-                    <p class="text-[13px] font-bold text-gray-800">{{ auth()->user()->nama ?? 'Guest' }}</p>
-                    <p class="text-[11px] text-gray-500 font-medium uppercase">{{ auth()->user()->role ?? '' }}</p>
+                    <p class="text-[13px] font-bold text-gray-800">{{ auth()->user()?->nama ?? 'Admin' }}</p>
+                    <p class="text-[11px] text-gray-500 font-medium uppercase">{{ auth()->user()?->role ?? '' }}</p>
                 </div>
                 <div class="w-10 h-10 rounded-full border border-gray-200 bg-white p-[2px] cursor-pointer hover:shadow-md transition">
-                    <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->nama ?? 'U') }}&background=2a93c9&color=fff" alt="User Avatar" class="w-full h-full rounded-full object-cover">
+                    <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()?->nama ?? 'A') }}&background=2a93c9&color=fff" alt="User Avatar" class="w-full h-full rounded-full object-cover">
                 </div>
             </div>
         </header>
@@ -46,7 +46,7 @@
             <div class="flex justify-between items-center mb-6">
                 <h1 class="text-[24px] font-semibold text-black tracking-tight">Daftar Template SK</h1>
                 <a href="{{ url('/upload-template') }}" class="inline-block px-8 py-2 border border-[#2a93c9] text-[#2a93c9] text-[13px] font-semibold rounded bg-white shadow-sm hover:bg-blue-50 transition-colors">
-                    UPLOAD
+                    <i class="fa-solid fa-cloud-arrow-up mr-2"></i> UPLOAD
                 </a>
             </div>
 
@@ -62,7 +62,7 @@
                         <tr class="bg-[#2a93c9] text-white">
                             <th class="py-3 px-4 font-medium text-[13px] w-16 border-r border-[#3a9ed0]">No</th>
                             <th class="py-3 px-4 font-medium text-[13px] border-r border-[#3a9ed0]">Kelompok SK</th>
-                            <th class="py-3 px-4 font-medium text-[13px] border-r border-[#3a9ed0]">Jenis SK</th>
+                            <th class="py-3 px-4 font-medium text-[13px] border-r border-[#3a9ed0]">Nama Template</th>
                             <th class="py-3 px-4 font-medium text-[13px] border-r border-[#3a9ed0]">Tanggal Upload</th>
                             <th class="py-3 px-4 font-medium text-[13px] w-36">Aksi</th>
                         </tr>
@@ -71,13 +71,18 @@
                         @forelse($templates as $index => $data)
                             <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors text-[13px]">
                                 <td class="py-4 px-4 text-[#4a9bc8] border-r border-gray-100">{{ $index + 1 }}</td>
-                                <td class="py-4 px-4 text-gray-700 font-medium border-r border-gray-100">{{ $data->keterangan }}</td>
-                                <td class="py-4 px-4 text-[#4a9bc8] border-r border-gray-100">{{ $data->nama_template }}</td>
+                                
+                                <td class="py-4 px-4 text-gray-700 border-r border-gray-100 text-left">
+                                    <span class="font-bold text-[#2a93c9] block">{{ $data->jenisSk->kelompok_sk ?? '-' }}</span>
+                                    <span class="text-[11px] text-gray-500">{{ $data->jenisSk->nama_jenis_sk ?? '-' }}</span>
+                                </td>
+                                
+                                <td class="py-4 px-4 text-gray-800 font-medium border-r border-gray-100 text-left">{{ $data->nama_template }}</td>
                                 <td class="py-4 px-4 text-gray-600 border-r border-gray-100">{{ $data->created_at->format('d/m/Y') }}</td>
                                 <td class="py-4 px-4">
                                     <div class="flex justify-center gap-3 text-lg">
                                         
-                                        <button type="button" onclick="openPreview('{{ asset('storage/' . $data->file_template) }}', '{{ $data->nama_template }}')" class="text-green-500 hover:opacity-70 transition" title="Lihat langsung file">
+                                        <button type="button" onclick="openPreview('/storage/{{ $data->file_template }}', '{{ $data->nama_template }}')" class="text-green-500 hover:opacity-70 transition" title="Lihat langsung file">
                                             <i class="fa-solid fa-eye"></i>
                                         </button>
 
@@ -135,17 +140,14 @@
             
             document.getElementById('modalTitle').textContent = "Melihat File: " + docTitle;
             
-            // Tampilkan modal dan animasi loading
             modal.classList.remove('hidden');
             loading.classList.remove('hidden');
-            container.innerHTML = ""; // Bersihkan sisa pratinjau sebelumnya
+            container.innerHTML = ""; 
 
-            // Cek jika tipenya PDF
             if (fileUrl.toLowerCase().endsWith('.pdf')) {
                 loading.classList.add('hidden');
                 container.innerHTML = `<iframe src="${fileUrl}" class="w-full h-[70vh] border rounded bg-white"></iframe>`;
             } else {
-                // Proses mengambil file Word (.docx) dan mengubahnya menjadi HTML secara live
                 fetch(fileUrl)
                     .then(response => {
                         if (!response.ok) throw new Error('Gagal mengambil file.');
@@ -153,7 +155,6 @@
                     })
                     .then(blob => {
                         loading.classList.add('hidden');
-                        // Render file docx ke dalam container div
                         docx.renderAsync(blob, container)
                             .catch(err => {
                                 container.innerHTML = `<div class="p-6 text-center text-red-500 font-medium bg-white border">Format file tidak didukung oleh browser.</div>`;

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PengajuanSk;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -12,13 +13,13 @@ class UserDashboardController extends Controller
         // Mendapatkan data user yang sedang login
         $user = Auth::user();
 
-        // MENGHITUNG STATISTIK (Sementara diset 0 sebelum tabel Pengajuan SK dibuat di tahap selanjutnya)
-        $totalPengajuan = 0; 
-        $sedangDiproses = 0;
-        $selesai = 0;
+        // Mengambil semua data pengajuan milik user tersebut, diurutkan dari yang terbaru
+        $riwayatPengajuan = PengajuanSk::where('user_id', $user->id)->latest()->get();
 
-        // DATA RIWAYAT PENGAJUAN (Sementara array kosong)
-        $riwayatPengajuan = [];
+        // MENGHITUNG STATISTIK ASLI DARI DATABASE
+        $totalPengajuan = $riwayatPengajuan->count(); 
+        $sedangDiproses = $riwayatPengajuan->where('status_pengajuan', 'Diproses')->count();
+        $selesai        = $riwayatPengajuan->where('status_pengajuan', 'Selesai')->count();
 
         return view('user.dashboard', compact(
             'user', 

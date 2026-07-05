@@ -27,9 +27,9 @@
                 <div class="w-[20px] h-[3px] bg-white rounded-full"></div>
             </button>
             <div class="flex items-center gap-3">
-                <span class="text-[14px] font-medium text-gray-600 hidden md:block">Halo, {{ auth()->user()->nama ?? 'Pegawai' }}</span>
+                <span class="text-[14px] font-medium text-gray-600 hidden md:block">Halo, {{ auth()->user()?->nama ?? 'Pegawai' }}</span>
                 <div class="w-10 h-10 rounded-full border border-[#2491c9] p-[2px] cursor-pointer hover:shadow-md transition bg-white">
-                    <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->nama ?? 'U') }}&background=2491c9&color=fff" alt="User Avatar" class="w-full h-full rounded-full object-cover">
+                    <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()?->nama ?? 'U') }}&background=2491c9&color=fff" alt="User Avatar" class="w-full h-full rounded-full object-cover">
                 </div>
             </div>
         </header>
@@ -38,25 +38,24 @@
             
             <div class="mb-6">
                 <h1 class="text-[24px] font-bold text-gray-900">Pengajuan SK Baru</h1>
-                <p class="text-gray-500 text-[14px] mt-1" id="pageSubtitle">Langkah 1: Pilih Jenis Surat Keputusan</p>
+                <p class="text-gray-500 text-[14px] mt-1" id="pageSubtitle">Langkah 1: Pilih Kelompok Surat Keputusan</p>
             </div>
 
             <div id="step1-jenis" class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-[800px]">
-                <div onclick="pilihJenis('SK Umum')" class="hover-card bg-white border-2 border-gray-200 rounded-lg p-8 cursor-pointer flex flex-col items-center text-center transition-all hover:border-[#2491c9] hover:shadow-md">
-                    <div class="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mb-5">
-                        <i class="fa-solid fa-folder-open text-3xl text-[#2491c9]"></i>
+                @forelse($dataKelompok as $kelompok => $items)
+                <div onclick="pilihJenis('{{ $kelompok }}')" class="hover-card bg-white border-2 border-gray-200 rounded-lg p-8 cursor-pointer flex flex-col items-center text-center transition-all hover:border-[#2491c9] hover:shadow-md">
+                    <div class="w-20 h-20 {{ $kelompok == 'SK Teknis' ? 'bg-orange-50' : 'bg-blue-50' }} rounded-full flex items-center justify-center mb-5">
+                        <i class="fa-solid {{ $kelompok == 'SK Teknis' ? 'fa-cogs text-orange-500' : 'fa-folder-open text-[#2491c9]' }} text-3xl"></i>
                     </div>
-                    <h3 class="text-[18px] font-bold text-gray-800 mb-2">SK Umum</h3>
-                    <p class="text-[13px] text-gray-500">Pengajuan SK yang bersifat administratif umum, kepanitiaan internal, dan perjalanan dinas.</p>
+                    <h3 class="text-[18px] font-bold text-gray-800 mb-2">{{ $kelompok }}</h3>
+                    <p class="text-[13px] text-gray-500">Terdapat {{ count($items) }} template dokumen tersedia.</p>
                 </div>
-
-                <div onclick="pilihJenis('SK Teknis')" class="hover-card bg-white border-2 border-gray-200 rounded-lg p-8 cursor-pointer flex flex-col items-center text-center transition-all hover:border-orange-500 hover:shadow-md">
-                    <div class="w-20 h-20 bg-orange-50 rounded-full flex items-center justify-center mb-5">
-                        <i class="fa-solid fa-cogs text-3xl text-orange-500"></i>
-                    </div>
-                    <h3 class="text-[18px] font-bold text-gray-800 mb-2">SK Teknis</h3>
-                    <p class="text-[13px] text-gray-500">Pengajuan SK yang berkaitan langsung dengan kegiatan teknis statistik, sensus, survei lapangan, dll.</p>
+                @empty
+                <div class="col-span-2 text-center py-10 bg-white rounded border border-dashed border-gray-300">
+                    <p class="text-gray-500 mb-2">Belum ada template SK yang tersedia.</p>
+                    <p class="text-[12px] text-gray-400">Silakan hubungi Admin untuk mengupload Template terlebih dahulu.</p>
                 </div>
+                @endforelse
             </div>
 
             <div id="step2-kelompok" class="hidden w-full max-w-[900px]">
@@ -66,11 +65,11 @@
                         Kategori: <span id="labelJenisTerpilih" class="text-[#2491c9]">SK Umum</span>
                     </h2>
                     <button onclick="kembaliKeLangkah1()" class="text-[13px] text-gray-500 hover:text-red-500 font-medium transition flex items-center gap-1.5 bg-white px-3 py-1.5 border border-gray-200 rounded shadow-sm">
-                        <i class="fa-solid fa-arrow-left"></i> Ganti Jenis SK
+                        <i class="fa-solid fa-arrow-left"></i> Ganti Kelompok
                     </button>
                 </div>
                 <div id="wadahKelompokSK" class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    </div>
+                </div>
             </div>
 
             <div id="step3-form" class="hidden">
@@ -81,22 +80,28 @@
                             <div class="text-[12px] font-bold text-gray-400 uppercase flex items-center gap-2">
                                 <span id="breadJenis">SK Umum</span> <i class="fa-solid fa-chevron-right text-[10px]"></i>
                             </div>
-                            <h2 id="labelKelompokTerpilih" class="text-[20px] font-bold text-[#2491c9] mt-1">SK Kepanitiaan</h2>
+                            <h2 id="labelKelompokTerpilih" class="text-[20px] font-bold text-[#2491c9] mt-1">Nama Template SK</h2>
                         </div>
                         <button type="button" onclick="kembaliKeLangkah2()" class="text-[13px] text-gray-500 hover:text-red-500 font-medium transition flex items-center gap-1.5">
-                            <i class="fa-solid fa-arrow-left"></i> Ganti Kelompok
+                            <i class="fa-solid fa-arrow-left"></i> Ganti Template
                         </button>
                     </div>
 
                     <form id="formPengajuan" action="{{ url('/user/buat-sk') }}" method="POST" class="space-y-8">
                         @csrf
                         
-                        <input type="hidden" name="jenis_sk" id="hidden_jenis_sk">
-                        <input type="hidden" name="kelompok_sk" id="hidden_kelompok_sk">
+                        <!-- PERUBAHAN 1: Menyimpan nilai lama (old) agar tidak ter-reset -->
+                        <input type="hidden" name="jenis_sk" id="hidden_jenis_sk" value="{{ old('jenis_sk') }}">
+                        <input type="hidden" name="kelompok_sk" id="hidden_kelompok_sk" value="{{ old('kelompok_sk') }}">
 
                         @if ($errors->any())
-                            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative text-[12px]">
-                                <ul>@foreach ($errors->all() as $error) <li>- {{ $error }}</li> @endforeach</ul>
+                            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative text-[13px]">
+                                <strong>Pengajuan Gagal! Terdapat kesalahan:</strong>
+                                <ul class="list-disc pl-5 mt-1">
+                                    @foreach ($errors->all() as $error) 
+                                        <li>{{ $error }}</li> 
+                                    @endforeach
+                                </ul>
                             </div>
                         @endif
                         
@@ -156,32 +161,10 @@
                             </div>
                             
                             <div id="wadah-peserta" class="space-y-4">
-                                <div class="peserta-item bg-white p-4 rounded border border-gray-200 relative shadow-sm">
-                                    <h4 class="text-[12px] font-bold text-orange-600 mb-3 border-b border-gray-100 pb-2 flex justify-between">
-                                        <span class="nomor-peserta">Peserta #1</span>
-                                    </h4>
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div>
-                                            <label class="block text-gray-700 text-[12px] font-medium mb-1.5">Nama Pegawai</label>
-                                            <input type="text" name="peserta_nama[]" placeholder="Nama Lengkap..." class="w-full border border-gray-300 rounded px-3 py-2 text-[13px] focus:outline-none focus:border-orange-500" required>
-                                        </div>
-                                        <div>
-                                            <label class="block text-gray-700 text-[12px] font-medium mb-1.5">NIP Pegawai</label>
-                                            <input type="text" name="peserta_nip[]" placeholder="NIP Pegawai..." class="w-full border border-gray-300 rounded px-3 py-2 text-[13px] focus:outline-none focus:border-orange-500" required>
-                                        </div>
-                                        <div>
-                                            <label class="block text-gray-700 text-[12px] font-medium mb-1.5">Jabatan</label>
-                                            <input type="text" name="peserta_jab[]" placeholder="Jabatan dalam SK..." class="w-full border border-gray-300 rounded px-3 py-2 text-[13px] focus:outline-none focus:border-orange-500" required>
-                                        </div>
-                                        <div>
-                                            <label class="block text-gray-700 text-[12px] font-medium mb-1.5">Honor Per Bulan</label>
-                                            <input type="text" name="peserta_hnr[]" placeholder="Contoh: 1.150.000" class="w-full border border-gray-300 rounded px-3 py-2 text-[13px] focus:outline-none focus:border-orange-500" required>
-                                        </div>
-                                    </div>
-                                </div>
+                                <!-- Kita akan biarkan kosong dulu, nanti di-generate oleh JS jika ada data lama -->
                             </div>
                             
-                            <button type="button" onclick="tambahPeserta()" class="mt-4 bg-white text-orange-600 border border-orange-200 hover:bg-orange-100 font-semibold px-4 py-2 rounded text-[12px] transition w-full shadow-sm flex justify-center items-center gap-2">
+                            <button type="button" onclick="tambahPesertaLama('', '', '', '')" class="mt-4 bg-white text-orange-600 border border-orange-200 hover:bg-orange-100 font-semibold px-4 py-2 rounded text-[12px] transition w-full shadow-sm flex justify-center items-center gap-2">
                                 <i class="fa-solid fa-plus"></i> Tambah Data Peserta Lainnya
                             </button>
                         </div>
@@ -210,26 +193,16 @@
         let stateJenis = '';
         let stateKelompok = '';
 
-        const dataKelompokSK = {
-            'SK Umum': [
-                { nama: 'SK Kepanitiaan', icon: 'fa-users', desc: 'Acara, rapat, kepanitiaan kantor.' },
-                { nama: 'SK Perjalanan Dinas', icon: 'fa-car', desc: 'Penugasan dalam/luar kota.' },
-                { nama: 'SK Pengangkatan', icon: 'fa-user-tie', desc: 'Pengangkatan pegawai honorer.' }
-            ],
-            'SK Teknis': [
-                { nama: 'SK Lapangan', icon: 'fa-map-location-dot', desc: 'Petugas sensus & survei.' },
-                { nama: 'SK Tim Kerja (Pokja)', icon: 'fa-people-group', desc: 'Pembentukan kelompok kerja.' },
-                { nama: 'SK Pengolahan Data', icon: 'fa-laptop-code', desc: 'Petugas entri & editing.' }
-            ]
-        };
+        // Data Dinamis
+        const dataKelompokSK = @json($dataKelompok);
 
         function pilihJenis(jenis) {
             stateJenis = jenis;
-            document.getElementById('hidden_jenis_sk').value = jenis; // Set input hidden backend
+            document.getElementById('hidden_jenis_sk').value = jenis; 
             step1.classList.add('hidden');
             step2.classList.remove('hidden');
             
-            subtitle.innerText = "Langkah 2: Pilih Kelompok SK yang Spesifik";
+            subtitle.innerText = "Langkah 2: Pilih Template SK";
             document.getElementById('labelJenisTerpilih').innerText = jenis;
             
             const iconJenis = document.getElementById('iconJenis');
@@ -244,30 +217,35 @@
             const wadahKelompok = document.getElementById('wadahKelompokSK');
             wadahKelompok.innerHTML = ''; 
 
-            dataKelompokSK[jenis].forEach(kel => {
-                wadahKelompok.innerHTML += `
-                    <div onclick="pilihKelompok('${kel.nama}')" class="hover-card bg-white border border-gray-200 rounded flex p-4 cursor-pointer gap-4 items-center shadow-sm hover:border-[#2491c9] transition-all">
-                        <div class="w-12 h-12 rounded bg-gray-50 flex items-center justify-center flex-shrink-0 border border-gray-100">
-                            <i class="fa-solid ${kel.icon} text-lg text-gray-600"></i>
+            if(dataKelompokSK[jenis]) {
+                dataKelompokSK[jenis].forEach(kel => {
+                    const namaAman = kel.nama.replace(/'/g, "\\'");
+                    wadahKelompok.innerHTML += `
+                        <div onclick="pilihKelompok('${namaAman}')" class="hover-card bg-white border border-gray-200 rounded flex p-4 cursor-pointer gap-4 items-center shadow-sm hover:border-[#2491c9] transition-all">
+                            <div class="w-12 h-12 rounded bg-gray-50 flex items-center justify-center flex-shrink-0 border border-gray-100">
+                                <i class="fa-solid ${kel.icon} text-lg text-gray-600"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-[14px] font-bold text-gray-800">${kel.nama}</h4>
+                                <p class="text-[12px] text-gray-500 mt-0.5 leading-tight">${kel.desc}</p>
+                            </div>
                         </div>
-                        <div>
-                            <h4 class="text-[14px] font-bold text-gray-800">${kel.nama}</h4>
-                            <p class="text-[12px] text-gray-500 mt-0.5 leading-tight">${kel.desc}</p>
-                        </div>
-                    </div>
-                `;
-            });
+                    `;
+                });
+            } else {
+                wadahKelompok.innerHTML = `<div class="col-span-3 text-center py-6 text-gray-500 text-[13px] border border-dashed rounded">Belum ada template untuk kategori ini.</div>`;
+            }
         }
 
         function kembaliKeLangkah1() {
             step2.classList.add('hidden');
             step1.classList.remove('hidden');
-            subtitle.innerText = "Langkah 1: Pilih Jenis Surat Keputusan";
+            subtitle.innerText = "Langkah 1: Pilih Kelompok Surat Keputusan";
         }
 
         function pilihKelompok(kelompok) {
             stateKelompok = kelompok;
-            document.getElementById('hidden_kelompok_sk').value = kelompok; // Set input hidden backend
+            document.getElementById('hidden_kelompok_sk').value = kelompok; 
             step2.classList.add('hidden');
             step3.classList.remove('hidden');
 
@@ -279,10 +257,11 @@
         function kembaliKeLangkah2() {
             step3.classList.add('hidden');
             step2.classList.remove('hidden');
-            subtitle.innerText = "Langkah 2: Pilih Kelompok SK yang Spesifik";
+            subtitle.innerText = "Langkah 2: Pilih Template SK";
         }
 
-        function tambahPeserta() {
+        // FUNGSI TAMBAH PESERTA YANG SUDAH DIPERBARUI
+        function tambahPesertaLama(namaVal = '', nipVal = '', jabVal = '', hnrVal = '') {
             const wadah = document.getElementById('wadah-peserta');
             const totalPeserta = wadah.children.length + 1;
 
@@ -299,19 +278,19 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-gray-700 text-[12px] font-medium mb-1.5">Nama Pegawai</label>
-                        <input type="text" name="peserta_nama[]" placeholder="Nama Lengkap..." class="w-full border border-gray-300 rounded px-3 py-2 text-[13px] focus:outline-none focus:border-orange-500" required>
+                        <input type="text" name="peserta_nama[]" value="${namaVal}" placeholder="Nama Lengkap..." class="w-full border border-gray-300 rounded px-3 py-2 text-[13px] focus:outline-none focus:border-orange-500" required>
                     </div>
                     <div>
                         <label class="block text-gray-700 text-[12px] font-medium mb-1.5">NIP Pegawai</label>
-                        <input type="text" name="peserta_nip[]" placeholder="NIP Pegawai..." class="w-full border border-gray-300 rounded px-3 py-2 text-[13px] focus:outline-none focus:border-orange-500" required>
+                        <input type="text" name="peserta_nip[]" value="${nipVal}" placeholder="NIP Pegawai..." class="w-full border border-gray-300 rounded px-3 py-2 text-[13px] focus:outline-none focus:border-orange-500" required>
                     </div>
                     <div>
                         <label class="block text-gray-700 text-[12px] font-medium mb-1.5">Jabatan</label>
-                        <input type="text" name="peserta_jab[]" placeholder="Jabatan dalam SK..." class="w-full border border-gray-300 rounded px-3 py-2 text-[13px] focus:outline-none focus:border-orange-500" required>
+                        <input type="text" name="peserta_jab[]" value="${jabVal}" placeholder="Jabatan dalam SK..." class="w-full border border-gray-300 rounded px-3 py-2 text-[13px] focus:outline-none focus:border-orange-500" required>
                     </div>
                     <div>
                         <label class="block text-gray-700 text-[12px] font-medium mb-1.5">Honor Per Bulan</label>
-                        <input type="text" name="peserta_hnr[]" placeholder="Contoh: 1.150.000" class="w-full border border-gray-300 rounded px-3 py-2 text-[13px] focus:outline-none focus:border-orange-500" required>
+                        <input type="text" name="peserta_hnr[]" value="${hnrVal}" placeholder="Contoh: 1.150.000" class="w-full border border-gray-300 rounded px-3 py-2 text-[13px] focus:outline-none focus:border-orange-500" required>
                     </div>
                 </div>
             `;
@@ -330,6 +309,35 @@
                 elemen.querySelector('.nomor-peserta').innerText = `Peserta #${index + 1}`;
             });
         }
+
+        // PERUBAHAN 2: LOGIKA "SIHIR" UNTUK OTOMATIS BUKA LANGKAH 3 JIKA ADA ERROR
+        window.onload = () => {
+            const oldJenis = "{{ old('jenis_sk') }}";
+            const oldKelompok = "{{ old('kelompok_sk') }}";
+            
+            // Mengambil kembali data array peserta jika sebelumnya gagal
+            const oldNamas = @json(old('peserta_nama', []));
+            const oldNips = @json(old('peserta_nip', []));
+            const oldJabs = @json(old('peserta_jab', []));
+            const oldHnrs = @json(old('peserta_hnr', []));
+
+            if(oldJenis && oldKelompok) {
+                // Langsung lompat ke langkah 3 secara instan
+                pilihJenis(oldJenis);
+                pilihKelompok(oldKelompok);
+                
+                // Kembalikan kotak form peserta lama
+                if(oldNamas && oldNamas.length > 0) {
+                    for(let i=0; i < oldNamas.length; i++) {
+                        tambahPesertaLama(oldNamas[i], oldNips[i] || '', oldJabs[i] || '', oldHnrs[i] || '');
+                    }
+                } else {
+                    tambahPesertaLama(); // Jika kosong, tampilkan 1 kotak default
+                }
+            } else {
+                tambahPesertaLama(); // Tampilan normal pertama kali buka
+            }
+        };
     </script>
 </body>
 </html>
