@@ -49,21 +49,21 @@
                     <div class="card-title-container">
                         <h2 class="text-[#2a93c9] font-bold text-[16px] uppercase tracking-wide px-2">JUMLAH TEMPLATE SK</h2>
                     </div>
-                    <span class="text-[65px] font-[900] text-[#2a93c9] leading-none mt-2">10</span>
+                    <span class="text-[65px] font-[900] text-[#2a93c9] leading-none mt-2">{{ $jumlahTemplate }}</span>
                 </div>
                 
                 <div class="bg-white rounded border border-gray-200 shadow-sm flex flex-col items-center py-8 hover:shadow-md transition-shadow">
                     <div class="card-title-container">
                         <h2 class="text-[#2a93c9] font-bold text-[16px] uppercase tracking-wide px-2">TOTAL SK YANG DIBUAT</h2>
                     </div>
-                    <span class="text-[65px] font-[900] text-[#2a93c9] leading-none mt-2">50</span>
+                    <span class="text-[65px] font-[900] text-[#2a93c9] leading-none mt-2">{{ $totalSk }}</span>
                 </div>
                 
                 <div class="bg-white rounded border border-gray-200 shadow-sm flex flex-col items-center py-8 hover:shadow-md transition-shadow">
                     <div class="card-title-container">
                         <h2 class="text-[#2a93c9] font-bold text-[16px] uppercase tracking-wide px-2">SK BULAN INI</h2>
                     </div>
-                    <span class="text-[65px] font-[900] text-[#2a93c9] leading-none mt-2">5</span>
+                    <span class="text-[65px] font-[900] text-[#2a93c9] leading-none mt-2">{{ $skBulanIni }}</span>
                 </div>
             </div>
 
@@ -71,13 +71,30 @@
                 <div class="px-5 py-4 border-b border-gray-100">
                     <h3 class="text-[#2a93c9] text-[13px] font-bold uppercase tracking-wide">Aktivitas Terakhir</h3>
                 </div>
-                <div class="h-11 border-b border-gray-100 bg-[#fbfbfb]"></div>
-                <div class="h-11 border-b border-gray-100 bg-white"></div>
-                <div class="h-11 border-b border-gray-100 bg-[#fbfbfb]"></div>
-                <div class="h-11 border-b border-gray-100 bg-white"></div>
+                
+                @forelse($aktivitasTerakhir as $aktivitas)
+                    <div class="px-5 py-3 border-b border-gray-100 flex justify-between items-center {{ $loop->even ? 'bg-[#fbfbfb]' : 'bg-white' }}">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-blue-100 text-[#2a93c9] flex items-center justify-center text-[12px]">
+                                <i class="fa-solid fa-file-signature"></i>
+                            </div>
+                            <div>
+                                <p class="text-[12px] font-bold text-gray-800">{{ $aktivitas->nomor_sk }}</p>
+                                <p class="text-[11px] text-gray-500">Diajukan oleh: <span class="font-semibold">{{ $aktivitas->user->nama ?? 'Sistem' }}</span></p>
+                            </div>
+                        </div>
+                        <span class="text-[11px] font-medium text-gray-400 bg-gray-50 px-2 py-1 rounded">
+                            {{ \Carbon\Carbon::parse($aktivitas->created_at)->diffForHumans() }}
+                        </span>
+                    </div>
+                @empty
+                    <div class="px-5 py-8 text-center bg-white border-b border-gray-100">
+                        <p class="text-[12px] text-gray-500 italic">Belum ada aktivitas pengajuan SK.</p>
+                    </div>
+                @endforelse
                 
                 <div class="px-4 py-3 text-right bg-white">
-                    <a href="#" class="text-[#2a93c9] text-[11px] font-bold hover:underline uppercase transition">Lihat Semua ></a>
+                    <a href="{{ url('/arsip') }}" class="text-[#2a93c9] text-[11px] font-bold hover:underline uppercase transition">Lihat Semua ></a>
                 </div>
             </div>
         </div>

@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\PengajuanSk;
 use App\Models\PesertaSk;
+use App\Models\TemplateSk; // <-- PERBAIKAN 1: Import Model TemplateSk
 use App\Models\JenisSk;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-// WAJIB IMPORT LIBRARY PHPWORD
 use PhpOffice\PhpWord\TemplateProcessor; 
 
 class BuatSkController extends Controller
@@ -15,13 +15,17 @@ class BuatSkController extends Controller
     // Menampilkan Form
     public function create()
     {
-        $jenisSks = JenisSk::all();
+        // PERBAIKAN 2: Mengambil data template langsung dari tabel TemplateSk
+        $templates = TemplateSk::with('jenisSk')->get();
         $dataKelompok = [];
-        foreach ($jenisSks as $jenis) {
-            $dataKelompok[$jenis->kelompok_sk][] = [
-                'nama' => $jenis->nama_jenis_sk,
+        
+        foreach ($templates as $template) {
+            $kelompokUtama = $template->jenisSk->kelompok_sk ?? 'SK Umum';
+            
+            $dataKelompok[$kelompokUtama][] = [
+                'nama' => $template->nama_template,
                 'icon' => 'fa-file-signature',
-                'desc' => 'Periode: ' . ($jenis->periode ?? 'Umum'),
+                'desc' => 'Kategori: ' . ($template->jenisSk->nama_jenis_sk ?? '-'),
             ];
         }
 
@@ -31,7 +35,6 @@ class BuatSkController extends Controller
     // Memproses Data & Membuat File Word
     public function store(Request $request)
     {
-        // 1. Validasi Input Form
         $request->validate([
             'jenis_sk'           => 'required|string',
             'kelompok_sk'        => 'required|string',
@@ -46,11 +49,10 @@ class BuatSkController extends Controller
             'peserta_nama'       => 'required|array|min:1',
         ]);
 
-        // 2. Simpan Data ke Database
         $pengajuan = PengajuanSk::create([
             'user_id'            => Auth::id(),
             'jenis_sk'           => $request->jenis_sk,
-            'kelompok_sk'        => $request->kelompok_sk,
+            'kelompok_sk'        => $request->kelompok_sk, // Menyimpan nama_template
             'judul_sk'           => $request->judul_sk,
             'nomor_sk'           => $request->nomor_sk,
             'tahun_anggaran'     => $request->tahun_anggaran,
@@ -59,7 +61,7 @@ class BuatSkController extends Controller
             'tanggal_dipa'       => $request->tanggal_dipa,
             'kpa_nama'           => $request->kpa_nama,
             'kpa_nip'            => $request->kpa_nip,
-            'status_pengajuan'   => 'Diproses', // Status awal
+            'status_pengajuan'   => 'Diproses',
         ]);
 
         foreach ($request->peserta_nama as $index => $nama) {
@@ -76,58 +78,54 @@ class BuatSkController extends Controller
         // 3. PROSES "SIHIR" GENERATE DOKUMEN WORD (.docx)
         // =========================================================
         
-        // Cari template yang cocok berdasarkan Jenis SK yang dipilih
-        $jenisData = JenisSk::where('kelompok_sk', $request->jenis_sk)
-                            ->where('nama_jenis_sk', $request->kelompok_sk)
-                            ->first();
+        // PERBAIKAN 3: Mencari file dari tabel TemplateSk berdasarkan nama template
+        $templateData = TemplateSk::where('nama_template', $request->kelompok_sk)->first();
 
-        if ($jenisData && $jenisData->file_template) {
-            $templatePath = storage_path('app/public/' . $jenisData->file_template);
+        if ($templateData && $templateData->file_template) {
+            $templatePath = storage_path('app/public/' . $templateData->file_template);
             
             if (file_exists($templatePath)) {
-                // Panggil PHPWord TemplateProcessor
                 $templateProcessor = new TemplateProcessor($templatePath);
                 
-                // Ganti variabel teks biasa
-                $templateProcessor->setValue('judul', strtoupper($request->judul_sk));
-                $templateProcessor->setValue('no', $request->nomor_sk);
-                $templateProcessor->setValue('thn', $request->tahun_anggaran);
-                $templateProcessor->setValue('tgl_sk', \Carbon\Carbon::parse($request->tanggal_ditetapkan)->translatedFormat('d F Y'));
-                $templateProcessor->setValue('kpa', $request->kpa_nama);
-                $templateProcessor->setValue('nip_kpa', $request->kpa_nip);
+                // PERBAIKAN 4: Samakan seluruh variabel ini dengan yang di File Word
+                $templateProcessor->setValue('judul_sk', strtoupper($request->judul_sk));
+                $templateProcessor->setValue('nomor_sk', $request->nomor_sk);
+                $templateProcessor->setValue('tahun_anggaran', $request->tahun_anggaran);
+                $templateProcessor->setValue('tanggal_ditetapkan', \Carbon\Carbon::parse($request->tanggal_ditetapkan)->translatedFormat('d F Y'));
+                
+                $templateProcessor->setValue('nomor_dipa', $request->nomor_dipa);
+                $templateProcessor->setValue('tanggal_dipa', \Carbon\Carbon::parse($request->tanggal_dipa)->translatedFormat('d F Y'));
+                $templateProcessor->setValue('kpa_nama', $request->kpa_nama);
+                $templateProcessor->setValue('kpa_nip', $request->kpa_nip);
 
-                // Ganti variabel di dalam tabel (Peserta/Lampiran)
                 $pesertaCount = count($request->peserta_nama);
                 
                 try {
-                    // Fitur cloneRow akan menggandakan baris tabel sesuai jumlah peserta
-                    // WAJIB ADA variabel ${nama} di dalam tabel template Word-nya
-                    $templateProcessor->cloneRow('nama', $pesertaCount);
+                    // PERBAIKAN 5: Target clone baris menggunakan awalan 'no_urut' (karena di word = ${no_urut#1})
+                    $templateProcessor->cloneRow('no_urut', $pesertaCount);
 
                     for ($i = 0; $i < $pesertaCount; $i++) {
                         $rowNum = $i + 1;
                         $templateProcessor->setValue('no_urut#' . $rowNum, $rowNum);
-                        $templateProcessor->setValue('nama#' . $rowNum, $request->peserta_nama[$i]);
-                        $templateProcessor->setValue('nip#' . $rowNum, $request->peserta_nip[$i]);
-                        $templateProcessor->setValue('jab#' . $rowNum, $request->peserta_jab[$i]);
-                        $templateProcessor->setValue('hnr#' . $rowNum, $request->peserta_hnr[$i]);
+                        $templateProcessor->setValue('peserta_nama#' . $rowNum, $request->peserta_nama[$i]);
+                        $templateProcessor->setValue('peserta_nip#' . $rowNum, $request->peserta_nip[$i] ?? '-');
+                        $templateProcessor->setValue('peserta_jab#' . $rowNum, $request->peserta_jab[$i] ?? '-');
+                        $templateProcessor->setValue('peserta_hnr#' . $rowNum, $request->peserta_hnr[$i] ?? '0');
                     }
                 } catch (\Exception $e) {
-                    // Abaikan jika template tidak memiliki tabel peserta
+                    // Abaikan jika error saat mengkloning tabel
                 }
 
-                // Buat nama file unik & siapkan folder
                 $outputFileName = 'SK_' . time() . '_' . str_replace(['/', '\\'], '_', $request->nomor_sk) . '.docx';
                 $arsipDir = storage_path('app/public/arsip_sk');
                 if (!file_exists($arsipDir)) {
                     mkdir($arsipDir, 0777, true);
                 }
 
-                // Simpan file hasil generate
                 $outputPath = $arsipDir . '/' . $outputFileName;
                 $templateProcessor->saveAs($outputPath);
 
-                // Update path dokumen ke dalam database
+                // Update database pengajuan agar menyimpan lokasi file hasil jadinya
                 $pengajuan->update(['file_sk' => 'arsip_sk/' . $outputFileName]);
             }
         }

@@ -12,6 +12,8 @@ use App\Http\Controllers\JenisSkController;
 use App\Http\Controllers\UserDashboardController;
 use App\Http\Controllers\BuatSkController;
 use App\Http\Controllers\ArsipController;
+use App\Http\Controllers\KegiatanTeknisController;
+use App\Http\Controllers\AdminDashboardController;
 
 // Rute Publik (Tidak perlu login)
 Route::get('/', [AuthController::class, 'index'])->name('login');
@@ -24,9 +26,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 
     // --- DASHBOARD ADMIN ---
-    Route::get('/dashboard', function () {
-        return view('admin.dashboard');
-    });
+    Route::get('/dashboard', [AdminDashboardController::class, 'index']);
 
     // --- MANAJEMEN USER (Menggunakan Controller) ---
     Route::get('/manajemen-user', [UserController::class, 'index']);
@@ -76,6 +76,13 @@ Route::middleware('auth')->group(function () {
     Route::put('/edit-jenis-sk/{id}', [JenisSkController::class, 'update']);
     Route::delete('/hapus-jenis-sk/{id}', [JenisSkController::class, 'destroy']);
         
+    // Rute untuk Data Kegiatan Teknis
+    Route::get('/kegiatan-teknis', [KegiatanTeknisController::class, 'index']);
+    Route::get('/tambah-kegiatan-teknis', [KegiatanTeknisController::class, 'create']);
+    Route::post('/tambah-kegiatan-teknis', [KegiatanTeknisController::class, 'store']);
+    Route::get('/edit-kegiatan-teknis/{id}', [KegiatanTeknisController::class, 'edit']);
+    Route::put('/edit-kegiatan-teknis/{id}', [KegiatanTeknisController::class, 'update']);
+    Route::delete('/hapus-kegiatan-teknis/{id}', [KegiatanTeknisController::class, 'destroy']);
     
     // --- DAFTAR TEMPLATE ---
     Route::get('/daftar-template', [TemplateSkController::class, 'index']);

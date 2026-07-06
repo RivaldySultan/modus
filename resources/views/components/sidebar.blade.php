@@ -31,6 +31,8 @@
                     
                     <a href="{{ url('/data-pegawai') }}" title="Data Pegawai dan Mitra Statistik" class="sidebar-text text-[13px] block whitespace-nowrap overflow-hidden text-ellipsis {{ ($active ?? '') == 'data-pegawai' ? 'text-[#2a93c9] font-bold' : 'text-gray-600 hover:text-[#2a93c9]' }}"><span class="mr-1">&middot;</span> Data Pegawai dan Mitra Statistik</a>
                     
+                    <a href="{{ url('/kegiatan-teknis') }}" title="Data Kegiatan Teknis" class="sidebar-text text-[13px] block whitespace-nowrap overflow-hidden text-ellipsis {{ ($active ?? '') == 'kegiatan-teknis' ? 'text-[#2a93c9] font-bold' : 'text-gray-600 hover:text-[#2a93c9]' }}"><span class="mr-1">&middot;</span> Data Kegiatan Teknis</a>
+                    
                     <a href="{{ url('/data-jenis-sk') }}" title="Data Jenis SK" class="sidebar-text text-[13px] block whitespace-nowrap overflow-hidden text-ellipsis {{ ($active ?? '') == 'data-jenis-sk' ? 'text-[#2a93c9] font-bold' : 'text-gray-600 hover:text-[#2a93c9]' }}"><span class="mr-1">&middot;</span> Data Jenis SK</a>
                     
                     <a href="{{ url('/data-jabatan') }}" title="Data Jabatan Peserta" class="sidebar-text text-[13px] block whitespace-nowrap overflow-hidden text-ellipsis {{ ($active ?? '') == 'data-jabatan' ? 'text-[#2a93c9] font-bold' : 'text-gray-600 hover:text-[#2a93c9]' }}"><span class="mr-1">&middot;</span> Data Jabatan Peserta</a>
@@ -94,7 +96,7 @@
 
         // Fungsi otomatis membuka menu Data Master jika halamannya sedang aktif
         const activeMenu = "{{ $active ?? '' }}";
-        const masterMenus = ['data-teknis', 'data-kpa', 'data-pegawai', 'data-jenis-sk', 'data-jabatan'];
+        const masterMenus = ['data-teknis', 'data-kpa', 'data-pegawai', 'kegiatan-teknis', 'data-jenis-sk', 'data-jabatan'];
         
         if (masterMenus.includes(activeMenu) && sub) {
             sub.classList.remove('hidden');
