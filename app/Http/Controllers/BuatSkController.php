@@ -4,24 +4,27 @@ namespace App\Http\Controllers;
 
 use App\Models\PengajuanSk;
 use App\Models\PesertaSk;
-use App\Models\TemplateSk; // <-- PERBAIKAN 1: Import Model TemplateSk
-use App\Models\JenisSk;
+use App\Models\TemplateSk;
+// IMPORT SEMUA MASTER DATA
+use App\Models\KegiatanTeknis;
+use App\Models\DataTeknis;
+use App\Models\DataKpa;
+use App\Models\DataPegawai;
+use App\Models\JabatanPeserta;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use PhpOffice\PhpWord\TemplateProcessor; 
 
 class BuatSkController extends Controller
 {
-    // Menampilkan Form
     public function create()
     {
-        // PERBAIKAN 2: Mengambil data template langsung dari tabel TemplateSk
         $templates = TemplateSk::with('jenisSk')->get();
         $dataKelompok = [];
         
         foreach ($templates as $template) {
             $kelompokUtama = $template->jenisSk->kelompok_sk ?? 'SK Umum';
-            
             $dataKelompok[$kelompokUtama][] = [
                 'nama' => $template->nama_template,
                 'icon' => 'fa-file-signature',
@@ -29,10 +32,23 @@ class BuatSkController extends Controller
             ];
         }
 
-        return view('user.buat-sk', compact('dataKelompok'));
+        // MENGAMBIL SEMUA MASTER DATA UNTUK SIHIR AUTO-FILL
+        $kegiatanTeknis = KegiatanTeknis::latest()->get();
+        $dataDipa = DataKpa::latest()->get();
+        $dataKpa = DataKpa::latest()->get();
+        $dataPegawai = DataPegawai::orderBy('nama', 'asc')->get();
+        $dataJabatan = JabatanPeserta::orderBy('nama_jabatan', 'asc')->get();
+
+        return view('user.buat-sk', compact(
+            'dataKelompok', 
+            'kegiatanTeknis', 
+            'dataDipa', 
+            'dataKpa', 
+            'dataPegawai', 
+            'dataJabatan'
+        ));
     }
 
-    // Memproses Data & Membuat File Word
     public function store(Request $request)
     {
         $request->validate([
@@ -52,7 +68,7 @@ class BuatSkController extends Controller
         $pengajuan = PengajuanSk::create([
             'user_id'            => Auth::id(),
             'jenis_sk'           => $request->jenis_sk,
-            'kelompok_sk'        => $request->kelompok_sk, // Menyimpan nama_template
+            'kelompok_sk'        => $request->kelompok_sk, 
             'judul_sk'           => $request->judul_sk,
             'nomor_sk'           => $request->nomor_sk,
             'tahun_anggaran'     => $request->tahun_anggaran,
@@ -75,10 +91,8 @@ class BuatSkController extends Controller
         }
 
         // =========================================================
-        // 3. PROSES "SIHIR" GENERATE DOKUMEN WORD (.docx)
+        // PROSES GENERATE WORD
         // =========================================================
-        
-        // PERBAIKAN 3: Mencari file dari tabel TemplateSk berdasarkan nama template
         $templateData = TemplateSk::where('nama_template', $request->kelompok_sk)->first();
 
         if ($templateData && $templateData->file_template) {
@@ -87,7 +101,6 @@ class BuatSkController extends Controller
             if (file_exists($templatePath)) {
                 $templateProcessor = new TemplateProcessor($templatePath);
                 
-                // PERBAIKAN 4: Samakan seluruh variabel ini dengan yang di File Word
                 $templateProcessor->setValue('judul_sk', strtoupper($request->judul_sk));
                 $templateProcessor->setValue('nomor_sk', $request->nomor_sk);
                 $templateProcessor->setValue('tahun_anggaran', $request->tahun_anggaran);
@@ -101,9 +114,7 @@ class BuatSkController extends Controller
                 $pesertaCount = count($request->peserta_nama);
                 
                 try {
-                    // PERBAIKAN 5: Target clone baris menggunakan awalan 'no_urut' (karena di word = ${no_urut#1})
                     $templateProcessor->cloneRow('no_urut', $pesertaCount);
-
                     for ($i = 0; $i < $pesertaCount; $i++) {
                         $rowNum = $i + 1;
                         $templateProcessor->setValue('no_urut#' . $rowNum, $rowNum);
@@ -112,9 +123,7 @@ class BuatSkController extends Controller
                         $templateProcessor->setValue('peserta_jab#' . $rowNum, $request->peserta_jab[$i] ?? '-');
                         $templateProcessor->setValue('peserta_hnr#' . $rowNum, $request->peserta_hnr[$i] ?? '0');
                     }
-                } catch (\Exception $e) {
-                    // Abaikan jika error saat mengkloning tabel
-                }
+                } catch (\Exception $e) {}
 
                 $outputFileName = 'SK_' . time() . '_' . str_replace(['/', '\\'], '_', $request->nomor_sk) . '.docx';
                 $arsipDir = storage_path('app/public/arsip_sk');
@@ -125,11 +134,10 @@ class BuatSkController extends Controller
                 $outputPath = $arsipDir . '/' . $outputFileName;
                 $templateProcessor->saveAs($outputPath);
 
-                // Update database pengajuan agar menyimpan lokasi file hasil jadinya
                 $pengajuan->update(['file_sk' => 'arsip_sk/' . $outputFileName]);
             }
         }
 
-        return redirect('/user/dashboard')->with('success', 'Pengajuan SK berhasil dikirim dan dokumen selesai digenerate otomatis!');
+        return redirect('/user/dashboard')->with('success', 'Pengajuan SK berhasil dikirim dan dokumen selesai digenerate!');
     }
 }
