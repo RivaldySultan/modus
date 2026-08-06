@@ -49,8 +49,9 @@ class BuatSkController extends Controller
         ));
     }
 
-    public function store(Request $request)
+public function store(Request $request)
     {
+        // 1. TAMBAHKAN VALIDASI ANTI-NULL UNTUK ARRAY PESERTA
         $request->validate([
             'jenis_sk'           => 'required|string',
             'kelompok_sk'        => 'required|string',
@@ -63,6 +64,7 @@ class BuatSkController extends Controller
             'kpa_nama'           => 'required|string|max:255',
             'kpa_nip'            => 'required|string|max:255',
             'peserta_nama'       => 'required|array|min:1',
+            'peserta_nama.*'     => 'required|string', // <-- Baris ini memastikan tidak ada nama peserta yang kosong
         ]);
 
         $pengajuan = PengajuanSk::create([
@@ -80,7 +82,12 @@ class BuatSkController extends Controller
             'status_pengajuan'   => 'Diproses',
         ]);
 
+        // 2. TAMBAHKAN JARING PENGAMAN (IF EMPTY CONTINUE)
         foreach ($request->peserta_nama as $index => $nama) {
+            
+            // Lewati proses simpan jika nama kebetulan kosong/null
+            if (empty($nama)) continue; 
+
             PesertaSk::create([
                 'pengajuan_sk_id' => $pengajuan->id,
                 'nama_pegawai'    => $nama,
