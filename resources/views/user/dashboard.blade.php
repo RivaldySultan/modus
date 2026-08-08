@@ -79,7 +79,7 @@
                                 <th class="py-3 px-6 font-medium text-center w-16">No</th>
                                 <th class="py-3 px-6 font-medium">Jenis SK / Judul</th>
                                 <th class="py-3 px-6 font-medium">Tanggal Pengajuan</th>
-                                <th class="py-3 px-6 font-medium text-center">Status & Tanggapan</th>
+                                <th class="py-3 px-6 font-medium text-center">Status</th>
                                 <th class="py-3 px-6 font-medium text-center">Aksi / Dokumen</th>
                             </tr>
                         </thead>
@@ -96,36 +96,33 @@
                                     
                                     <td class="py-4 px-6">{{ \Carbon\Carbon::parse($riwayat->created_at)->translatedFormat('d F Y') }}</td>
                                     
-                                    <!-- Kolom Status & Tanggapan -->
+                                    <!-- Kolom Status -->
                                     <td class="py-4 px-6 text-center">
                                         @if($riwayat->status_pengajuan == 'Selesai')
-                                            <span class="bg-green-100 text-green-700 py-1 px-3 rounded-full text-[11px] font-bold inline-block mb-1">SELESAI DIPERIKSA</span>
+                                            <span class="bg-green-100 text-green-700 py-1 px-3 rounded-full text-[11px] font-bold inline-block">SELESAI DIPERIKSA</span>
                                         @elseif($riwayat->status_pengajuan == 'Revisi')
-                                            <span class="bg-orange-100 text-orange-700 py-1 px-3 rounded-full text-[11px] font-bold inline-block mb-1">BUTUH REVISI</span>
+                                            <span class="bg-orange-100 text-orange-700 py-1 px-3 rounded-full text-[11px] font-bold inline-block">BUTUH REVISI</span>
                                         @elseif($riwayat->status_pengajuan == 'Ditolak')
-                                            <span class="bg-red-100 text-red-700 py-1 px-3 rounded-full text-[11px] font-bold inline-block mb-1">DITOLAK</span>
+                                            <span class="bg-red-100 text-red-700 py-1 px-3 rounded-full text-[11px] font-bold inline-block">DITOLAK</span>
                                         @else
-                                            <span class="bg-yellow-100 text-yellow-700 py-1 px-3 rounded-full text-[11px] font-bold inline-block mb-1">MENUNGGU PENGECEKAN</span>
-                                        @endif
-                                        
-                                        <!-- Menampilkan Catatan/Alasan Admin -->
-                                        @if($riwayat->catatan)
-                                            <div class="mt-2 text-[11px] text-left bg-blue-50 p-2 border border-blue-100 rounded text-gray-700 shadow-sm">
-                                                <div class="font-bold text-[#2491c9] mb-1"><i class="fa-solid fa-comment-dots"></i> Alasan/Catatan Admin:</div>
-                                                <span class="italic">"{{ $riwayat->catatan }}"</span>
-                                            </div>
-                                        @elseif($riwayat->status_pengajuan == 'pending' || $riwayat->status_pengajuan == 'Diproses')
-                                            <div class="text-[11px] text-gray-400 mt-1 italic">Belum ada tanggapan</div>
+                                            <span class="bg-yellow-100 text-yellow-700 py-1 px-3 rounded-full text-[11px] font-bold inline-block">MENUNGGU PENGECEKAN</span>
                                         @endif
                                     </td>
                                     
-                                    <!-- Kolom Dokumen & Aksi Edit -->
+                                    <!-- Kolom Aksi & Dokumen -->
                                     <td class="py-4 px-6">
                                         <div class="flex justify-center gap-2 items-center">
                                             @if($riwayat->status_pengajuan == 'Ditolak' || $riwayat->status_pengajuan == 'Revisi')
+                                                <!-- Tombol Lihat Catatan Admin -->
+                                                @if($riwayat->catatan)
+                                                    <button type="button" onclick="openCatatanModal('{{ addslashes($riwayat->catatan) }}')" class="bg-gray-500 text-white hover:bg-gray-600 px-3 py-2 rounded text-[12px] font-semibold transition flex items-center gap-1.5 shadow-sm" title="Lihat Catatan Admin">
+                                                        <i class="fa-solid fa-circle-info"></i> Catatan
+                                                    </button>
+                                                @endif
+
                                                 <!-- Tombol Edit & Ajukan Ulang -->
                                                 <a href="{{ url('/user/edit-sk/' . $riwayat->id) }}" class="bg-orange-500 text-white hover:bg-orange-600 px-3 py-2 rounded text-[12px] font-semibold transition flex items-center gap-1.5 shadow-sm" title="Edit dan Ajukan Ulang Dokumen">
-                                                    <i class="fa-solid fa-pen-to-square"></i> Edit & Ajukan Ulang
+                                                    <i class="fa-solid fa-pen-to-square"></i> Edit
                                                 </a>
                                             @elseif($riwayat->file_sk)
                                                 <!-- Tombol Lihat/Unduh (Jika Selesai) -->
@@ -153,16 +150,38 @@
         </div>
     </main>
 
-    <!-- Modal Preview Dokumen -->
+    <!-- Modal Catatan / Alasan Admin -->
+    <div id="catatanModal" class="hidden fixed inset-0 bg-black/50 z-[70] flex items-center justify-center p-4">
+        <div class="bg-white rounded shadow-xl w-full max-w-md flex flex-col overflow-hidden">
+            <div class="px-6 py-4 bg-[#2491c9] text-white flex justify-between items-center">
+                <h3 class="font-bold text-[14px] uppercase tracking-wide">
+                    <i class="fa-solid fa-comment-dots mr-1"></i> Catatan Admin
+                </h3>
+                <button onclick="closeCatatanModal()" class="text-white hover:text-gray-200 text-2xl font-semibold leading-none">&times;</button>
+            </div>
+            <div class="p-6 bg-gray-50">
+                <div class="bg-white p-4 rounded border border-gray-200 shadow-sm">
+                    <p id="catatanText" class="text-[14px] text-gray-700 italic"></p>
+                </div>
+            </div>
+            <div class="px-6 py-4 border-t border-gray-100 text-right bg-white">
+                <button onclick="closeCatatanModal()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded text-[13px] font-semibold transition">
+                    Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Preview Dokumen (Bawaan Kode Asli) -->
     <div id="previewModal" class="hidden fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4">
         <div class="bg-white rounded shadow-xl w-full max-w-4xl h-[85vh] flex flex-col overflow-hidden">
-            <div class="px-6 py-4 bg-[#2a93c9] text-white flex justify-between items-center flex-shrink-0">
+            <div class="px-6 py-4 bg-[#2491c9] text-white flex justify-between items-center flex-shrink-0">
                 <h3 id="modalTitle" class="font-bold text-[14px] uppercase tracking-wide">Pratinjau Dokumen</h3>
-                <button onclick="closePreview()" class="text-white hover:text-gray-200 text-2xl font-semibold">&times;</button>
+                <button onclick="closePreview()" class="text-white hover:text-gray-200 text-2xl font-semibold leading-none">&times;</button>
             </div>
             <div class="flex-1 overflow-y-auto bg-gray-100 p-6 flex justify-center items-start relative">
                 <div id="loadingTemplate" class="hidden absolute inset-0 bg-white/80 z-10 flex flex-col items-center justify-center gap-2">
-                    <i class="fa-solid fa-spinner fa-spin text-3xl text-[#2a93c9]"></i>
+                    <i class="fa-solid fa-spinner fa-spin text-3xl text-[#2491c9]"></i>
                     <p class="text-[13px] text-gray-500 font-medium">Membaca isi dokumen...</p>
                 </div>
                 <div id="documentContainer" class="w-full max-w-[800px]"></div>
@@ -175,6 +194,23 @@
     <script src="https://unpkg.com/docx-preview/dist/docx-preview.js"></script>
 
     <script>
+        // --- Fungsi Modal Catatan Admin ---
+        function openCatatanModal(text) {
+            const modal = document.getElementById('catatanModal');
+            const textContainer = document.getElementById('catatanText');
+            
+            // Set teks catatan, beri default jika kosong
+            textContainer.innerText = text ? `"${text}"` : "Tidak ada catatan spesifik dari admin.";
+            
+            // Tampilkan modal
+            modal.classList.remove('hidden');
+        }
+
+        function closeCatatanModal() {
+            document.getElementById('catatanModal').classList.add('hidden');
+        }
+
+        // --- Fungsi Modal Preview Dokumen (Bawaan) ---
         function openPreview(fileUrl, docTitle) {
             const previewModal = document.getElementById('previewModal');
             const container = document.getElementById('documentContainer');
