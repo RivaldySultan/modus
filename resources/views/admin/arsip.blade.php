@@ -105,6 +105,7 @@
                             <td class="py-4 px-4">
                                 <div class="flex flex-wrap justify-center gap-1.5 items-center">
                                     
+                                    <!-- Tombol Lihat/Unduh (Selalu Tampil) -->
                                     @if($item->file_sk)
                                         <button type="button" onclick="openPreview('/storage/{{ $item->file_sk }}', '{{ $item->nomor_sk }}')" class="bg-white border border-[#2a93c9] text-[#2a93c9] px-2.5 py-1.5 rounded hover:bg-blue-50 transition shadow-sm" title="Lihat Dokumen">
                                             <i class="fa-solid fa-eye"></i>
@@ -115,17 +116,25 @@
                                         </a>
                                     @endif
 
-                                    <form action="{{ url('/arsip/update-status/' . $item->id) }}" method="POST" class="inline" onsubmit="return confirm('Setujui dan sahkan SK ini?')">
-                                        @csrf
-                                        <input type="hidden" name="status_pengajuan" value="Selesai">
-                                        <button type="submit" class="bg-green-500 text-white px-2.5 py-1.5 rounded hover:bg-green-600 transition shadow-sm" title="Setujui (Selesai)">
-                                            <i class="fa-solid fa-check"></i>
-                                        </button>
-                                    </form>
+                                    <!-- Tombol Aksi (Hanya Tampil Jika Belum Diverifikasi) -->
+                                    @if($item->status_pengajuan !== 'Selesai' && $item->status_pengajuan !== 'Revisi' && $item->status_pengajuan !== 'Ditolak')
+                                        <form action="{{ url('/arsip/update-status/' . $item->id) }}" method="POST" class="inline" onsubmit="return confirm('Setujui dan sahkan SK ini?')">
+                                            @csrf
+                                            <input type="hidden" name="status_pengajuan" value="Selesai">
+                                            <button type="submit" class="bg-green-500 text-white px-2.5 py-1.5 rounded hover:bg-green-600 transition shadow-sm" title="Setujui (Selesai)">
+                                                <i class="fa-solid fa-check"></i>
+                                            </button>
+                                        </form>
 
-                                    <button type="button" onclick="bukaModalTanggapan('{{ $item->id }}', '{{ $item->nomor_sk }}')" class="bg-orange-500 text-white px-2.5 py-1.5 rounded hover:bg-orange-600 transition shadow-sm" title="Beri Tanggapan / Minta Revisi">
-                                        <i class="fa-solid fa-comment-dots"></i>
-                                    </button>
+                                        <button type="button" onclick="bukaModalTanggapan('{{ $item->id }}', '{{ $item->nomor_sk }}')" class="bg-orange-500 text-white px-2.5 py-1.5 rounded hover:bg-orange-600 transition shadow-sm" title="Beri Tanggapan / Minta Revisi">
+                                            <i class="fa-solid fa-comment-dots"></i>
+                                        </button>
+                                    @else
+                                        <!-- Indikator Jika Sudah Diverifikasi (Ceklis Hilang) -->
+                                        <span class="bg-gray-100 text-gray-500 px-2.5 py-1.5 rounded border border-gray-200 shadow-sm" title="Tindakan Selesai">
+                                            <i class="fa-solid fa-lock"></i>
+                                        </span>
+                                    @endif
                                     
                                 </div>
                             </td>

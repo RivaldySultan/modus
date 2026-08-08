@@ -99,11 +99,19 @@ Route::middleware('auth')->group(function () {
     Route::get('/arsip', [ArsipController::class, 'index']);
     // --- AKSI MONITORING SK ---
     Route::post('/arsip/update-status/{id}', [ArsipController::class, 'updateStatus']);
+    // Route untuk memproses form tanggapan admin
+    Route::put('/arsip/{id}/tanggapi', [ArsipController::class, 'tanggapi'])->name('admin.arsip.tanggapi');
 
     // --- HALAMAN USER (PEGAWAI) ---
     // (Tidak perlu dibungkus middleware auth lagi karena sudah berada di dalam grup auth utama)
     Route::get('/user/dashboard', [UserDashboardController::class, 'index']);
     Route::get('/user/buat-sk', [BuatSkController::class, 'create']); 
     Route::post('/user/buat-sk', [BuatSkController::class, 'store']); 
+    Route::get('/user/edit-sk/{id}', [BuatSkController::class, 'edit'])->name('user.sk.edit');
 
+    // Route untuk buka halaman form edit
+    Route::get('/user/edit-sk/{id}', [BuatSkController::class, 'edit'])->name('user.sk.edit');
+
+    // Route untuk eksekusi tombol "Simpan & Ajukan Ulang"
+    Route::put('/user/update-sk/{id}', [BuatSkController::class, 'update'])->name('user.sk.update');
 }); 
