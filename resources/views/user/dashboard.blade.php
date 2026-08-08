@@ -114,8 +114,8 @@
                                         <div class="flex justify-center gap-2 items-center">
                                             @if($riwayat->status_pengajuan == 'Ditolak' || $riwayat->status_pengajuan == 'Revisi')
                                                 <!-- Tombol Lihat Catatan Admin -->
-                                                @if($riwayat->catatan)
-                                                    <button type="button" onclick="openCatatanModal('{{ addslashes($riwayat->catatan) }}')" class="bg-gray-500 text-white hover:bg-gray-600 px-3 py-2 rounded text-[12px] font-semibold transition flex items-center gap-1.5 shadow-sm" title="Lihat Catatan Admin">
+                                                @if($riwayat->tanggapan)
+                                                    <button type="button" onclick="openCatatanModal('{{ addslashes($riwayat->tanggapan) }}')" class="bg-gray-500 text-white hover:bg-gray-600 px-3 py-2 rounded text-[12px] font-semibold transition flex items-center gap-1.5 shadow-sm" title="Lihat Catatan Admin">
                                                         <i class="fa-solid fa-circle-info"></i> Catatan
                                                     </button>
                                                 @endif
