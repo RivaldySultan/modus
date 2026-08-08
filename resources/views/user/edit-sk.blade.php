@@ -41,7 +41,7 @@
                 <p class="text-gray-500 text-[14px] mt-1" id="pageSubtitle">Langkah 3: Lengkapi Formulir Meta Data SK</p>
             </div>
 
-            <!-- Banner Catatan Admin (Sangat berguna agar user tahu apa yang harus direvisi) -->
+            <!-- Banner Catatan Admin -->
             @if($sk->catatan)
                 <div class="bg-orange-50 border-l-4 border-orange-500 p-4 mb-6 rounded shadow-sm max-w-[800px]">
                     <h3 class="font-bold text-orange-700 text-[14px] mb-1"><i class="fa-solid fa-comment-dots"></i> Catatan Revisi dari Admin:</h3>
@@ -198,7 +198,7 @@
                             
                             <datalist id="jabatan_list">
                                 @foreach($dataJabatan as $jab)
-                                    <option value="{{ $jab->nama_jabatan }}">
+                                    <option value="{{ $jab->nama_jabatan }}"></option>
                                 @endforeach
                             </datalist>
 

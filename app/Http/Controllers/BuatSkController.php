@@ -156,9 +156,13 @@ class BuatSkController extends Controller
     public function edit($id)
     {
         // Cari data SK dan pastikan itu milik user yang sedang login
-        $sk = PengajuanSk::with('peserta_sks')->where('id', $id)
+        // PERBAIKAN: with('peserta_sks') dihapus agar tidak error
+        $sk = PengajuanSk::where('id', $id)
                 ->where('user_id', Auth::id())
                 ->firstOrFail();
+
+        // PERBAIKAN: Ambil data peserta secara manual berdasarkan pengajuan_sk_id
+        $peserta = PesertaSk::where('pengajuan_sk_id', $sk->id)->get();
 
         // Regenerate Data Template untuk modal
         $templates = TemplateSk::with('jenisSk')->get();
@@ -182,6 +186,7 @@ class BuatSkController extends Controller
 
         return view('user.edit-sk', compact(
             'sk', 
+            'peserta', // PERBAIKAN: Variabel peserta ikut dikirim ke view
             'dataKelompok', 
             'kegiatanTeknis', 
             'dataDipa', 
